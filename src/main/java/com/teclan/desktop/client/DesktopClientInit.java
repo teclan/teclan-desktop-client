@@ -104,12 +104,15 @@ public class DesktopClientInit {
         loginFrem.add(jpCopyRight);
         loginFrem.setVisible(true);
 
+        account.setText("1");
+        password.setText("1");
+
     }
 
     /**
      * 设置主工作空间
      */
-    public static void showWorkSpace(){
+    public static void showWorkSpace(String user){
 
         JFrame workSpace = new JFrame();
         workSpace.setSize(1300, 700);
@@ -117,10 +120,40 @@ public class DesktopClientInit {
         workSpace.setUndecorated(true);
         workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         workSpace.setResizable(false);
+        workSpace.setLayout(new BorderLayout());
 
+        JPanel info = new JPanel();
+        info.setLayout(new BorderLayout());
+        info.setSize(200,1300);
+        JLabel userAndService = new JLabel("当前登录用户:"+user+"                           服务器:"+Contant.SERVER_ADDRESS);
+        userAndService.setSize(100,1300);
+        userAndService.setFont(Contant.FONT);
+        info.add(BorderLayout.NORTH,userAndService);
+
+        JPanel jpFile = new JPanel();
+        jpFile.setSize(100,1300);
+        jpFile.setBounds(100,1300,0,0);
+        JLabel localPath = new JLabel("本地文件路径:");
+        localPath.setFont(Contant.FONT);
+        JTextField path = new JTextField("--请选择--");
+        path.setEditable(false);
+        path.setFont(Contant.FONT);
+        JButton chooser = new JButton("选择文件...");
+        chooser.setFont(Contant.FONT);
+        jpFile.add(localPath);
+        jpFile.add(path);
+        jpFile.add(chooser);
+
+        info.add(BorderLayout.CENTER,jpFile);
+
+
+        JPanel localAndRemote = new JPanel();
+        localAndRemote.setBackground(Color.GRAY);
+        localAndRemote.setSize(200,1300);
+
+        workSpace.add(BorderLayout.NORTH,info);
+        workSpace.add(BorderLayout.CENTER,localAndRemote);
         workSpace.setVisible(true);
-
     }
-
 
 }

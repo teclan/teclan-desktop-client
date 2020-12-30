@@ -45,7 +45,7 @@ public class DefaultLoginActionListener implements ActionListener {
 
             clientService.login(user, pwd);
             frame.setVisible(false);
-            DesktopClientInit.showWorkSpace();
+            DesktopClientInit.showWorkSpace(user);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
