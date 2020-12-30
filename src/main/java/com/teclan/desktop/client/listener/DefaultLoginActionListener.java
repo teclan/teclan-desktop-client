@@ -1,5 +1,6 @@
 package com.teclan.desktop.client.listener;
 
+import com.teclan.desktop.client.DesktopClientInit;
 import com.teclan.desktop.client.service.ClientService;
 import com.teclan.desktop.client.utils.Assert;
 import com.teclan.desktop.client.utils.DialogUtils;
@@ -43,6 +44,8 @@ public class DefaultLoginActionListener implements ActionListener {
             }
 
             clientService.login(user, pwd);
+            frame.setVisible(false);
+            DesktopClientInit.showWorkSpace();
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

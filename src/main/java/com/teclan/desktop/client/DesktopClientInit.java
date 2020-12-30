@@ -13,13 +13,16 @@ import java.awt.event.*;
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
 
-    public  static  void init(ClientService clientService){
+    public static void initLoginFrem(ClientService clientService){
 
         /**
          * 登录主窗体
          */
-        Frame loginFrem = new Frame( );
+        JFrame loginFrem = new JFrame( );
+        loginFrem.setUndecorated(true);
+        loginFrem.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         loginFrem.setSize(600, 400);
+        loginFrem.setResizable(false);
         loginFrem.setLocationRelativeTo(null);//在屏幕中居中显示
         loginFrem.setTitle("");
         loginFrem.setLayout(new GridLayout(6,1,0,0));
@@ -100,6 +103,22 @@ public class DesktopClientInit {
         loginFrem.add(jpReset);
         loginFrem.add(jpCopyRight);
         loginFrem.setVisible(true);
+
+    }
+
+    /**
+     * 设置主工作空间
+     */
+    public static void showWorkSpace(){
+
+        JFrame workSpace = new JFrame();
+        workSpace.setSize(1300, 700);
+        workSpace.setLocationRelativeTo(null);//在屏幕中居中显示
+        workSpace.setUndecorated(true);
+        workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
+        workSpace.setResizable(false);
+
+        workSpace.setVisible(true);
 
     }
 
