@@ -8,62 +8,72 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Locale;
+import java.awt.event.*;
 
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
 
-
     public  static  void init(ClientService clientService){
 
-        Frame main = new Frame( );
-        main.setSize(600, 400);
-        main.setLocationRelativeTo(null);//在屏幕中居中显示
-//        main.setBackground(Color.BLACK);
-        main.setTitle("");
-        main.setLayout(new GridLayout(6,1,0,0));
+        /**
+         * 登录主窗体
+         */
+        Frame loginFrem = new Frame( );
+        loginFrem.setSize(600, 400);
+        loginFrem.setLocationRelativeTo(null);//在屏幕中居中显示
+        loginFrem.setTitle("");
+        loginFrem.setLayout(new GridLayout(6,1,0,0));
 
-        JPanel jPanel0 = new JPanel();
-        JLabel jLabel0 = new JLabel(Contant.SYSTEM);
-        jLabel0.setFont(Contant.FONT);
-        jPanel0.add(jLabel0);
-
-        JPanel jPanel1 = new JPanel();
-        JLabel jLabel1 = new JLabel("账号：");
-        jLabel1.setFont(Contant.FONT);
-        JTextField account = new JTextField(10);
+        // 无设置信息，仅作为占位排版使用
+        JPanel jpNothing = new JPanel();
+        JLabel jlNothing = new JLabel(Contant.SYSTEM);
+        jlNothing.setFont(Contant.FONT);
+        jpNothing.add(jlNothing);
+        // 账号信息面板
+        JPanel jpAccount = new JPanel();
+        JLabel jlAccount = new JLabel("账号：");
+        jlAccount.setFont(Contant.FONT);
+        final JTextField account = new JTextField(10);
         account.setFont(Contant.FONT);
-        jPanel1.add(jLabel1);
-        jPanel1.add(account);
-
-        JPanel jPanel2 = new JPanel();
-        JLabel jLabel2 = new JLabel("密码：");
-
-        jLabel2.setFont(Contant.FONT);
-        JPasswordField password = new JPasswordField(10);
+        jpAccount.add(jlAccount);
+        jpAccount.add(account);
+        // 密码信息面板
+        JPanel jpPassword = new JPanel();
+        JLabel jlPassword = new JLabel("密码：");
+        jlPassword.setFont(Contant.FONT);
+        final JPasswordField password = new JPasswordField(10);
         password.setFont(Contant.FONT);
-        jPanel2.add(jLabel2);
-        jPanel2.add(password);
+        jpPassword.add(jlPassword);
+        jpPassword.add(password);
 
-//        Dimension preferredSize = new Dimension(20,20);
-        JPanel jPanel3 = new JPanel();
+        /**
+         * 重置、登录按钮信息面板
+         */
+        JPanel jpReset = new JPanel();
         JButton reset = new JButton("重置");
         reset.setFont(Contant.FONT);
-//        reg.setPreferredSize(preferredSize );
+        reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                account.setText("");
+                password.setText("");
+            }
+        });
         final JButton login = new JButton("登录");
         login.setFont(Contant.FONT);
-        login.addActionListener(new DefaultLoginActionListener(clientService,main,account,password ));
-//        login.setPreferredSize(preferredSize );
-        jPanel3.add(reset);
-        jPanel3.add(login);
+        login.addActionListener(new DefaultLoginActionListener(clientService,loginFrem,account,password ));
+        jpReset.add(reset);
+        jpReset.add(login);
+        /**
+         * 版权信息面板
+         */
+        JPanel jpCopyRight = new JPanel();
+        JLabel jlCopyRight = new JLabel(Contant.COPYRIGHT);
+        jpCopyRight.add(jlCopyRight);
 
-        main.addWindowListener(new WindowAdapter() {
+
+        loginFrem.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                LOGGER.info("窗口即将关闭...");
+                LOGGER.info("主窗口即将关闭...");
                 System.exit(0);
             }
         });
@@ -83,17 +93,13 @@ public class DesktopClientInit {
             }
         });
 
-        JPanel jPanel4 = new JPanel();
-        JLabel jLabel4 = new JLabel(Contant.COPYRIGHT);
-        jPanel4.add(jLabel4);
-
-        main.add(new JPanel());
-        main.add(jPanel0);
-        main.add(jPanel1);
-        main.add(jPanel2);
-        main.add(jPanel3);
-        main.add(jPanel4);
-        main.setVisible(true);
+        loginFrem.add(new JPanel());
+        loginFrem.add(jpNothing);
+        loginFrem.add(jpAccount);
+        loginFrem.add(jpPassword);
+        loginFrem.add(jpReset);
+        loginFrem.add(jpCopyRight);
+        loginFrem.setVisible(true);
 
     }
 
