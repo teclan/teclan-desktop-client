@@ -29,7 +29,7 @@ public class DialogUtils {
         jFrame.setResizable(false);
         Container container=jFrame.getContentPane();//将窗体转化为容器
         JButton jb=new JButton(message);
-        jb.setFont(Contant.FONT);
+        jb.setFont(Contant.FONT_SIZE_20);
         jFrame.addWindowListener(windowAdapter);
         container.add(jb);
         jFrame.setVisible(true);//使窗体可见
