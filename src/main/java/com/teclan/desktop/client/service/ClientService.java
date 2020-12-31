@@ -9,4 +9,6 @@ public interface ClientService {
     public void login(String account,String password) throws Exception;
 
     public void upload(JProgressBar jProgressBar, JLabel jLabel,List<String> filePaths) throws Exception;
+
+    public void download(JProgressBar jProgressBar, JLabel jLabel,List<String> filePaths) throws Exception;
 }

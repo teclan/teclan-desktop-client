@@ -122,8 +122,8 @@ public class DesktopClientInit {
         loginFrem.add(jpCopyRight);
         loginFrem.setVisible(true);
 
-        account.setText("1");
-        password.setText("1");
+        account.setText("admin");
+        password.setText("admin");
 
     }
 
@@ -230,18 +230,22 @@ public class DesktopClientInit {
         vBox.add(hBox01);
 
         JPanel bottom = new JPanel();
+        bottom.setLayout(new BorderLayout(0, 10));
         final JProgressBar progressBar=new JProgressBar();
-        progressBar.setSize(new Dimension(500, 1000));
         progressBar.setOrientation(JProgressBar.HORIZONTAL);
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
         progressBar.setBorderPainted(true);
 //        progressBar.setBackground(Color.pink);
         progressBar.setForeground(Color.GREEN);
-
         JLabel uploadFile = new JLabel();
-        bottom.add(BorderLayout.CENTER,progressBar);
-        bottom.add(BorderLayout.EAST,uploadFile);
+        JLabel copyRight = new JLabel("                                                           "+Contant.COPYRIGHT);
+        copyRight.setFont(new Font("宋体",Font.BOLD,16));
+        copyRight.setSize(new Dimension(500, 1000));
+        bottom.add(BorderLayout.NORTH,progressBar);
+        bottom.add(BorderLayout.CENTER, uploadFile);
+        bottom.add(BorderLayout.SOUTH,copyRight);
+
 
         workSpace.add(BorderLayout.NORTH, info);
         workSpace.add(BorderLayout.CENTER, vBox);
