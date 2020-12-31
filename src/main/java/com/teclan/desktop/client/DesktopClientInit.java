@@ -13,21 +13,21 @@ import java.awt.event.*;
 
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
-    private static ActionListener  defaultLoginActionListener ;
+    private static ActionListener defaultLoginActionListener;
 
-    public static void initLoginFrem(ClientService clientService){
+    public static void initLoginFrem(ClientService clientService) {
 
         /**
          * 登录主窗体
          */
-        JFrame loginFrem = new JFrame( );
+        JFrame loginFrem = new JFrame();
         loginFrem.setUndecorated(true);
         loginFrem.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         loginFrem.setSize(600, 400);
         loginFrem.setResizable(false);
         loginFrem.setLocationRelativeTo(null);//在屏幕中居中显示
         loginFrem.setTitle("");
-        loginFrem.setLayout(new GridLayout(6,1,0,0));
+        loginFrem.setLayout(new GridLayout(6, 1, 0, 0));
 
         // 无设置信息，仅作为占位排版使用
         JPanel jpNothing = new JPanel();
@@ -66,7 +66,7 @@ public class DesktopClientInit {
         final JButton login = new JButton("登录");
         login.setFont(Contant.FONT_SIZE_20);
 
-        defaultLoginActionListener = new DefaultLoginActionListener(clientService,loginFrem,account,password );
+        defaultLoginActionListener = new DefaultLoginActionListener(clientService, loginFrem, account, password);
         login.addActionListener(defaultLoginActionListener);
         jpReset.add(reset);
         jpReset.add(login);
@@ -89,12 +89,13 @@ public class DesktopClientInit {
             public void keyTyped(KeyEvent keyEvent) {
 
             }
+
             public void keyReleased(KeyEvent keyEvent) {
 
             }
+
             public void keyPressed(KeyEvent keyEvent) {
-                if(keyEvent.getKeyChar() == KeyEvent.VK_ENTER )
-                {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     login.doClick();
                 }
             }
@@ -103,8 +104,7 @@ public class DesktopClientInit {
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventPostProcessor(new KeyEventPostProcessor() {
             public boolean postProcessKeyEvent(KeyEvent keyEvent) {
-                if(keyEvent.getKeyChar() == KeyEvent.VK_ENTER )
-                {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     login.doClick();
                 }
                 return true;
@@ -127,7 +127,7 @@ public class DesktopClientInit {
     /**
      * 设置主工作空间
      */
-    public static void showWorkSpace(String user){
+    public static void showWorkSpace(String user) {
 
         JFrame workSpace = new JFrame();
         workSpace.setSize(1300, 700);
@@ -135,22 +135,21 @@ public class DesktopClientInit {
         workSpace.setUndecorated(true);
         workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         workSpace.setResizable(false);
-        workSpace.setLayout(new BorderLayout(20,10)); // 水平间距 100 上下间距 10
-
+        workSpace.setLayout(new BorderLayout(20, 10)); // 水平间距 100 上下间距 10
 
 
         JPanel info = new JPanel();
-        info.setLayout(new BorderLayout(20,10));
-        JLabel userAndService = new JLabel("当前登录用户:"+user+"                                                服务器:"+Contant.SERVER_ADDRESS);
+        info.setLayout(new BorderLayout(20, 10));
+        JLabel userAndService = new JLabel("当前登录用户:" + user + "                                                服务器:" + Contant.SERVER_ADDRESS);
         userAndService.setFont(Contant.FONT_SIZE_20);
-        info.add(BorderLayout.NORTH,userAndService);
+        info.add(BorderLayout.NORTH, userAndService);
 
         JPanel LocalFilePath = new JPanel();
         JLabel jlLocalPath = new JLabel("本地文件路径:");
         jlLocalPath.setFont(Contant.FONT_SIZE_20);
         final JTextField jtLocalPath = new JTextField();
         jtLocalPath.setBorder(Contant.BORDER);
-        jtLocalPath.setPreferredSize(new Dimension (330,30));
+        jtLocalPath.setPreferredSize(new Dimension(330, 30));
         jtLocalPath.setEditable(false);
         jtLocalPath.setFont(Contant.FONT_SIZE_20);
         JButton chooser = new JButton("选择");
@@ -159,24 +158,26 @@ public class DesktopClientInit {
         LocalFilePath.add(jlLocalPath);
         LocalFilePath.add(jtLocalPath);
         LocalFilePath.add(chooser);
-        info.add(BorderLayout.WEST,LocalFilePath);
+        info.add(BorderLayout.WEST, LocalFilePath);
 
         JPanel remoteFilePath = new JPanel();
         JLabel jlRemotePath = new JLabel("服务器文件路径:");
         jlRemotePath.setFont(Contant.FONT_SIZE_20);
         JTextField jtRemotePath = new JTextField();
         jtRemotePath.setBorder(Contant.BORDER);
-        jtRemotePath.setPreferredSize(new Dimension (400,30));
+        jtRemotePath.setPreferredSize(new Dimension(400, 30));
         jtRemotePath.setEditable(false);
         jtRemotePath.setFont(Contant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(jtRemotePath);
-        info.add(BorderLayout.EAST,remoteFilePath);
+        info.add(BorderLayout.EAST, remoteFilePath);
 
-        final JScrollPane localFileTable = fileInfoTableInit();
+
+        JTable localTable = fileInfoTableInit();
+        JScrollPane localFileTable = new JScrollPane(localTable);
 
         JPanel option = new JPanel();
-        GridLayout gridLayout = new GridLayout(13,1);
+        GridLayout gridLayout = new GridLayout(13, 1);
         option.setLayout(gridLayout);
 
 
@@ -196,8 +197,9 @@ public class DesktopClientInit {
         option.add(getBlankButton());
         option.add(getBlankButton());
 
-        JScrollPane remoteFileTable = fileInfoTableInit();
 
+        JTable remotrTable = fileInfoTableInit();
+        JScrollPane remoteFileTable = new JScrollPane(remotrTable);
         Box hBox01 = Box.createHorizontalBox();
         hBox01.add(localFileTable);
         hBox01.add(option);
@@ -206,10 +208,34 @@ public class DesktopClientInit {
         Box vBox = Box.createVerticalBox();
         vBox.add(hBox01);
 
-        workSpace.add(BorderLayout.NORTH,info);
-        workSpace.add(BorderLayout.CENTER,vBox);
+        workSpace.add(BorderLayout.NORTH, info);
+        workSpace.add(BorderLayout.CENTER, vBox);
 
         workSpace.setVisible(true);
+
+        upload.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int[] selectRowIdxs = localTable.getSelectedRows();
+                for (int index : selectRowIdxs) {
+                    String absolutePath = (String) localTable.getValueAt(index, 0);
+                    LOGGER.info("即将上传文件:{}", absolutePath);
+                }
+            }
+        });
+
+        download.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                JTable remotrTable = (JTable) hBox01.getComponent(0);
+                int[] selectRowIdxs = remotrTable.getSelectedRows();
+                for (int index : selectRowIdxs) {
+                    String absolutePath = (String) remotrTable.getValueAt(index, 0);
+                    LOGGER.info("即将下载文件:{}", absolutePath);
+                }
+            }
+        });
 
         chooser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {  //按钮点击事件
@@ -221,35 +247,36 @@ public class DesktopClientInit {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
 
                     String absolutePath = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
-                    String fileName =  chooser.getSelectedFile().getName();
-                    LOGGER.info("选择文件:{}，绝对路径：{}",absolutePath,fileName);
+                    String fileName = chooser.getSelectedFile().getName();
+                    LOGGER.info("选择文件:{}，绝对路径：{}", absolutePath, fileName);
                     jtLocalPath.setText(absolutePath);
 
-                    JScrollPane jScrollPane = FileUtils.flusFileListByPath(absolutePath);
+
+                    FileUtils.flusFileListByPath(localTable,absolutePath);
+                    JScrollPane jScrollPane = new JScrollPane(localTable);
                     hBox01.remove(0);
-                    hBox01.add(jScrollPane,0);
+                    hBox01.add(jScrollPane, 0);
                     workSpace.pack();
                 }
             }
         });
     }
 
-    public static JScrollPane fileInfoTableInit(){
-        String[] headers = new String[]{"文件名","文件大小","修改时间"};
+    public static JTable fileInfoTableInit() {
+        String[] headers = new String[]{"文件名", "文件大小", "修改时间"};
         Object[][] rows = new Object[][]{
-                new Object[]{"111.txt","100M","2020-12-31 08:06:23"},
-                new Object[]{"22222222222222222222222.txt","100M","2020-12-31 08:06:23"},
-                new Object[]{"3333333333.txt","100M","2020-12-31 08:06:23"},
-                new Object[]{"11888888888888888888888888888888881.txt","100M","2020-12-31 08:06:23"}
+                new Object[]{"111.txt", "100M", "2020-12-31 08:06:23"},
+                new Object[]{"22222222222222222222222.txt", "100M", "2020-12-31 08:06:23"},
+                new Object[]{"3333333333.txt", "100M", "2020-12-31 08:06:23"},
+                new Object[]{"11888888888888888888888888888888881.txt", "100M", "2020-12-31 08:06:23"}
         };
-        JTable table = new JTable(rows,headers);
-        JScrollPane jScrollPane=  new  JScrollPane(table);
-        return jScrollPane;
+        JTable table = new JTable(rows, headers);
+        return table;
     }
 
-    private static JButton getBlankButton(){
+    private static JButton getBlankButton() {
         JButton jButton = new JButton();
-        jButton.setSize(20,10);
+        jButton.setSize(20, 10);
         jButton.setEnabled(false);
         jButton.setBorderPainted(false);
         return jButton;

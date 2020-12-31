@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Vector;
 
 public class FileUtils {
     private static Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
@@ -31,22 +33,35 @@ public class FileUtils {
     }
 
 
-    public static JScrollPane flusFileListByPath(String filePath) {
-        String[] headers = new String[]{"文件名", "文件大小", "修改时间"};
+    public static void flusFileListByPath(JTable jTable,String filePath) {
+
+        Vector vData = new Vector();
+        Vector vName = new Vector();
+        vName.add("文件名");
+        vName.add("文件大小");
+        vName.add("修改时间");
 
         File[] files = getFileList(filePath);
 
         Object[][] rows = new Object[files.length + 1][3];
         rows[0] = new Object[]{"..", "", ""};
 
+        Vector vRow = new Vector();
+        vRow.add("..");
+        vRow.add("");
+        vRow.add("");
+        vData.add(vRow);
+
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            rows[i + 1] = new Object[]{file.getName(), getFileSize(file), DateUtils.getDataString(file.lastModified())};
+            vRow = new Vector();
+            vRow.add(file.getName());
+            vRow.add(getFileSize(file));
+            vRow.add(DateUtils.getDataString(file.lastModified()));
+            vData.add(vRow);
         }
-        JTable table = new JTable(rows, headers);
-        JScrollPane jScroll = new JScrollPane(table);
-
-        return jScroll;
+        DefaultTableModel model = new DefaultTableModel(vData, vName);
+        jTable.setModel(model);
     }
 
     private static String getFileSize(File file) {
