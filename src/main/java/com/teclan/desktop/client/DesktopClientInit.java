@@ -3,10 +3,12 @@ package com.teclan.desktop.client;
 import com.teclan.desktop.client.contant.Contant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
 import com.teclan.desktop.client.service.ClientService;
+import javafx.scene.layout.Border;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -138,7 +140,7 @@ public class DesktopClientInit {
         workSpace.setResizable(false);
         workSpace.setLayout(new BorderLayout(20,10)); // 水平间距 100 上下间距 10
 
-        Box loaclaFilePathBox = Box.createHorizontalBox();
+
 
         JPanel info = new JPanel();
         info.setLayout(new BorderLayout(20,10));
@@ -149,10 +151,9 @@ public class DesktopClientInit {
         JPanel LocalFilePath = new JPanel();
         JLabel jlLocalPath = new JLabel("本地文件路径:");
         jlLocalPath.setFont(Contant.FONT_SIZE_20);
-        final JTextField jtLocalPath = new JTextField("   --请选择--  ");
-//        jtLocalPath.setSize(1000,10);
-        jtLocalPath.setPreferredSize(new Dimension (200,30));
-        jtLocalPath.setBackground(Color.GRAY);
+        final JTextField jtLocalPath = new JTextField();
+        jtLocalPath.setBorder(Contant.BORDER);
+        jtLocalPath.setPreferredSize(new Dimension (330,30));
         jtLocalPath.setEditable(false);
         jtLocalPath.setFont(Contant.FONT_SIZE_20);
         JButton chooser = new JButton("选择");
@@ -178,45 +179,56 @@ public class DesktopClientInit {
         LocalFilePath.add(jlLocalPath);
         LocalFilePath.add(jtLocalPath);
         LocalFilePath.add(chooser);
-
         info.add(BorderLayout.WEST,LocalFilePath);
 
         JPanel remoteFilePath = new JPanel();
         JLabel jlRemotePath = new JLabel("服务器文件路径:");
-        jlRemotePath.setPreferredSize(new Dimension (200,30));
         jlRemotePath.setFont(Contant.FONT_SIZE_20);
-        JTextField jtRemotePath = new JTextField("-----");
-        jtRemotePath.setBackground(Color.GRAY);
+        JTextField jtRemotePath = new JTextField();
+        jtRemotePath.setBorder(Contant.BORDER);
+        jtRemotePath.setPreferredSize(new Dimension (400,30));
         jtRemotePath.setEditable(false);
         jtRemotePath.setFont(Contant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(jtRemotePath);
-        info.add(BorderLayout.CENTER,remoteFilePath);
-
-
-        JPanel localAndRemote = new JPanel();
-        localAndRemote.setLayout(new GridLayout(1,3));
+        info.add(BorderLayout.EAST,remoteFilePath);
 
         JScrollPane localFileTable = fileInfoTableInit();
-        JScrollPane remoteFileTable = fileInfoTableInit();
 
-        JPanel blank = new JPanel();
-        blank.setPreferredSize(new Dimension(20,10));
-        blank.setMinimumSize(new Dimension(20,10));
+        JPanel option = new JPanel();
+        GridLayout gridLayout = new GridLayout(13,1);
+        option.setLayout(gridLayout);
+
+
         JButton upload = new JButton("上传");
         JButton download = new JButton("下载");
-        blank.add(upload);
-        blank.add(download);
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(upload);
+        option.add(getBlankButton());
+        option.add(download);
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
+        option.add(getBlankButton());
 
-       // blank.setBackground(Color.RED);
+        JScrollPane remoteFileTable = fileInfoTableInit();
+
+        Box hBox01 = Box.createHorizontalBox();
+        hBox01.add(localFileTable);
+        hBox01.add(option);
+        hBox01.add(remoteFileTable);
+
+        Box vBox = Box.createVerticalBox();
+        vBox.add(hBox01);
 
         workSpace.add(BorderLayout.NORTH,info);
-        workSpace.add(BorderLayout.CENTER,localAndRemote);
+        workSpace.add(BorderLayout.CENTER,vBox);
 
-
-//        workSpace.add(BorderLayout.WEST ,localFileTable);
-//        workSpace.add(BorderLayout.CENTER,blank);
-//        workSpace.add(BorderLayout.EAST,remoteFileTable);
         workSpace.setVisible(true);
     }
 
@@ -231,6 +243,14 @@ public class DesktopClientInit {
         JTable table = new JTable(rows,headers);
         JScrollPane jScrollPane=  new  JScrollPane(table);
         return jScrollPane;
+    }
+
+    private static JButton getBlankButton(){
+        JButton jButton = new JButton();
+        jButton.setSize(20,10);
+        jButton.setEnabled(false);
+        jButton.setBorderPainted(false);
+        return jButton;
     }
 
 }
