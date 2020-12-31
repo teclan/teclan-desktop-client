@@ -33,13 +33,9 @@ public class DefaultLoginActionListener implements ActionListener {
     }
 
     public synchronized void actionPerformed(ActionEvent actionEvent) {
-
-        LOGGER.info("登录按钮被触发 ...");
         if (logined) {
-            LOGGER.info(" 已经登录，忽略 ...");
             return;
         }
-
         String user = account.getText();
         String pwd = password.getText();
         try {
@@ -53,6 +49,7 @@ public class DefaultLoginActionListener implements ActionListener {
             clientService.login(user, pwd);
             logined = true;
             frame.setVisible(false);
+            frame.dispose();
             DesktopClientInit.showWorkSpace(clientService,user);
             LOGGER.info("登录完成 ...");
         } catch (Exception e) {

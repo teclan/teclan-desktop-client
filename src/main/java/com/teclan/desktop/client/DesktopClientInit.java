@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.teclan.desktop.client.contant.Contant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
 import com.teclan.desktop.client.service.ClientService;
+import com.teclan.desktop.client.utils.Assert;
+import com.teclan.desktop.client.utils.DialogUtils;
 import com.teclan.desktop.client.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,11 +179,14 @@ public class DesktopClientInit {
         jlRemotePath.setFont(Contant.FONT_SIZE_20);
         JTextField jtRemotePath = new JTextField();
         jtRemotePath.setBorder(Contant.BORDER);
-        jtRemotePath.setPreferredSize(new Dimension(400, 30));
-        jtRemotePath.setEditable(false);
+        jtRemotePath.setPreferredSize(new Dimension(330, 30));
+        JButton open = new JButton("刷新");
+        open.setFont(new Font("宋体",Font.BOLD,14));
+//        jtRemotePath.setEditable(false);
         jtRemotePath.setFont(Contant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(jtRemotePath);
+        remoteFilePath.add(open);
         info.add(BorderLayout.EAST, remoteFilePath);
 
 
@@ -255,6 +260,23 @@ public class DesktopClientInit {
         workSpace.setLocationRelativeTo(null);
         workSpace.pack();
 
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String remoteFilePath = jtRemotePath.getText();
+                if(Assert.assertNullString(remoteFilePath)){
+                    DialogUtils.showWarn("服务器文件路径不能为空!",new WindowAdapter() {
+                        public void windowClosing(WindowEvent e) {
+                            LOGGER.info("弹出窗口即将关闭...");
+                        }
+                    });
+                }else {
+                    // 加载远程文件列表
+                    clientService.reloadRemoteFileList(remotrTable,remoteFilePath);
+                }
+            }
+        });
+
         upload.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -307,6 +329,7 @@ public class DesktopClientInit {
                 }
             }
         });
+
     }
 
     private static JButton getBlankButton() {

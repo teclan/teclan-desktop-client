@@ -24,7 +24,7 @@ public class DialogUtils {
         JFrame jFrame = new JFrame();
         jFrame.setUndecorated(true); // 去掉窗口的装饰
         jFrame.getRootPane().setWindowDecorationStyle(style);//采用指定的窗口装饰风格
-        jFrame.setSize(200, 100);
+        jFrame.setSize(500, 200);
         jFrame.setLocationRelativeTo(null);//在屏幕中居中显示
         jFrame.setResizable(false);
         Container container=jFrame.getContentPane();//将窗体转化为容器
@@ -33,6 +33,7 @@ public class DialogUtils {
         jFrame.addWindowListener(windowAdapter);
         container.add(jb);
         jFrame.setVisible(true);//使窗体可见
+        jFrame.pack();
     }
 
 }

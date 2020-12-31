@@ -1,5 +1,7 @@
 package com.teclan.desktop.client.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.teclan.desktop.client.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,5 +35,19 @@ public class DefaultClientService implements ClientService {
             // 上传
             jProgressBar.setValue(100);
         }
+    }
+
+    @Override
+    public void reloadRemoteFileList(JTable jTable, String remoteFilePath) {
+        LOGGER.info("即将获取服务器文件列表：{}",remoteFilePath);
+        // TODO
+        // 获取远程文件列表
+        JSONObject jsonObject = new JSONObject();
+        try {
+            FileUtils.flusFileList(jTable,jsonObject);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+        }
+
     }
 }
