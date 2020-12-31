@@ -12,6 +12,7 @@ import java.awt.event.*;
 
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
+    private static ActionListener  defaultLoginActionListener ;
 
     public static void initLoginFrem(ClientService clientService){
 
@@ -63,7 +64,9 @@ public class DesktopClientInit {
         });
         final JButton login = new JButton("登录");
         login.setFont(Contant.FONT);
-        login.addActionListener(new DefaultLoginActionListener(clientService,loginFrem,account,password ));
+
+        defaultLoginActionListener = new DefaultLoginActionListener(clientService,loginFrem,account,password );
+        login.addActionListener(defaultLoginActionListener);
         jpReset.add(reset);
         jpReset.add(login);
         /**
@@ -96,6 +99,17 @@ public class DesktopClientInit {
             }
         });
 
+        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        manager.addKeyEventPostProcessor(new KeyEventPostProcessor() {
+            public boolean postProcessKeyEvent(KeyEvent keyEvent) {
+                if(keyEvent.getKeyChar() == KeyEvent.VK_ENTER )
+                {
+                    login.doClick();
+                }
+                return true;
+            }
+        });
+
         loginFrem.add(new JPanel());
         loginFrem.add(jpNothing);
         loginFrem.add(jpAccount);
@@ -124,27 +138,38 @@ public class DesktopClientInit {
 
         JPanel info = new JPanel();
         info.setLayout(new BorderLayout());
-        info.setSize(200,1300);
         JLabel userAndService = new JLabel("当前登录用户:"+user+"                           服务器:"+Contant.SERVER_ADDRESS);
-        userAndService.setSize(100,1300);
         userAndService.setFont(Contant.FONT);
         info.add(BorderLayout.NORTH,userAndService);
 
-        JPanel jpFile = new JPanel();
-        jpFile.setSize(100,1300);
-        jpFile.setBounds(100,1300,0,0);
-        JLabel localPath = new JLabel("本地文件路径:");
-        localPath.setFont(Contant.FONT);
-        JTextField path = new JTextField("--请选择--");
-        path.setEditable(false);
-        path.setFont(Contant.FONT);
-        JButton chooser = new JButton("选择文件...");
+        JPanel LocalFilePath = new JPanel();
+        JLabel jlLocalPath = new JLabel("本地文件路径:");
+        jlLocalPath.setFont(Contant.FONT);
+        JTextField jtLocalPath = new JTextField("   --请选择--  ");
+//        jtLocalPath.setSize(1000,10);
+        jtLocalPath.setPreferredSize(new Dimension (200,30));
+        jtLocalPath.setBackground(Color.GRAY);
+        jtLocalPath.setEditable(false);
+        jtLocalPath.setFont(Contant.FONT);
+        JButton chooser = new JButton("选择");
         chooser.setFont(Contant.FONT);
-        jpFile.add(localPath);
-        jpFile.add(path);
-        jpFile.add(chooser);
+        LocalFilePath.add(jlLocalPath);
+        LocalFilePath.add(jtLocalPath);
+        LocalFilePath.add(chooser);
 
-        info.add(BorderLayout.CENTER,jpFile);
+        info.add(BorderLayout.WEST,LocalFilePath);
+
+        JPanel remoteFilePath = new JPanel();
+        JLabel jlRemotePath = new JLabel("服务器文件路径:");
+        jlRemotePath.setPreferredSize(new Dimension (200,30));
+        jlRemotePath.setFont(Contant.FONT);
+        JTextField jtRemotePath = new JTextField("-----");
+        jtRemotePath.setBackground(Color.GRAY);
+        jtRemotePath.setEditable(false);
+        jtRemotePath.setFont(Contant.FONT);
+        remoteFilePath.add(jlRemotePath);
+        remoteFilePath.add(jtRemotePath);
+        info.add(BorderLayout.CENTER,remoteFilePath);
 
 
         JPanel localAndRemote = new JPanel();

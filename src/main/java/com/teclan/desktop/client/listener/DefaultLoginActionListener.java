@@ -23,15 +23,22 @@ public class DefaultLoginActionListener implements ActionListener {
     private JTextField account;
     private JPasswordField password;
     private ClientService clientService;
+    private boolean logined = false;
 
-    public DefaultLoginActionListener(ClientService clientService, Frame frame,JTextField account, JPasswordField password) {
+    public DefaultLoginActionListener(ClientService clientService, Frame frame, JTextField account, JPasswordField password) {
         this.account = account;
         this.password = password;
         this.clientService = clientService;
         this.frame = frame;
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    public synchronized void actionPerformed(ActionEvent actionEvent) {
+
+        LOGGER.info("登录按钮被触发 ...");
+        if (logined) {
+            LOGGER.info(" 已经登录，忽略 ...");
+            return;
+        }
 
         String user = account.getText();
         String pwd = password.getText();
@@ -44,12 +51,13 @@ public class DefaultLoginActionListener implements ActionListener {
             }
 
             clientService.login(user, pwd);
+            logined = true;
             frame.setVisible(false);
             DesktopClientInit.showWorkSpace(user);
-
+            LOGGER.info("登录完成 ...");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-
+            logined = false;
             frame.setEnabled(false);
             DialogUtils.showError(e.getMessage(), new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
