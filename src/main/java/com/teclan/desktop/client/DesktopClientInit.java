@@ -3,14 +3,11 @@ package com.teclan.desktop.client;
 import com.teclan.desktop.client.contant.Contant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
 import com.teclan.desktop.client.service.ClientService;
-import javafx.scene.layout.Border;
+import com.teclan.desktop.client.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -144,7 +141,7 @@ public class DesktopClientInit {
 
         JPanel info = new JPanel();
         info.setLayout(new BorderLayout(20,10));
-        JLabel userAndService = new JLabel("当前登录用户:"+user+"                           服务器:"+Contant.SERVER_ADDRESS);
+        JLabel userAndService = new JLabel("当前登录用户:"+user+"                                                服务器:"+Contant.SERVER_ADDRESS);
         userAndService.setFont(Contant.FONT_SIZE_20);
         info.add(BorderLayout.NORTH,userAndService);
 
@@ -157,23 +154,6 @@ public class DesktopClientInit {
         jtLocalPath.setEditable(false);
         jtLocalPath.setFont(Contant.FONT_SIZE_20);
         JButton chooser = new JButton("选择");
-        chooser.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {  //按钮点击事件
-                JFileChooser chooser = new JFileChooser();             //设置选择器
-                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                chooser.setMultiSelectionEnabled(true);             //设为多选
-                int returnVal = chooser.showOpenDialog(chooser);        //是否打开文件选择框
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
-
-                    String absolutePath = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
-                    String fileName =  chooser.getSelectedFile().getName();
-                    LOGGER.info("选择文件:{}，绝对路径：{}",absolutePath,fileName);
-                    jtLocalPath.setText(absolutePath);
-                }
-            }
-        });
-
 
         chooser.setFont(Contant.FONT_SIZE_20);
         LocalFilePath.add(jlLocalPath);
@@ -193,7 +173,7 @@ public class DesktopClientInit {
         remoteFilePath.add(jtRemotePath);
         info.add(BorderLayout.EAST,remoteFilePath);
 
-        JScrollPane localFileTable = fileInfoTableInit();
+        final JScrollPane localFileTable = fileInfoTableInit();
 
         JPanel option = new JPanel();
         GridLayout gridLayout = new GridLayout(13,1);
@@ -230,6 +210,28 @@ public class DesktopClientInit {
         workSpace.add(BorderLayout.CENTER,vBox);
 
         workSpace.setVisible(true);
+
+        chooser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {  //按钮点击事件
+                JFileChooser chooser = new JFileChooser();             //设置选择器
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setMultiSelectionEnabled(true);             //设为多选
+                int returnVal = chooser.showOpenDialog(chooser);        //是否打开文件选择框
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
+
+                    String absolutePath = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
+                    String fileName =  chooser.getSelectedFile().getName();
+                    LOGGER.info("选择文件:{}，绝对路径：{}",absolutePath,fileName);
+                    jtLocalPath.setText(absolutePath);
+
+                    JScrollPane jScrollPane = FileUtils.flusFileListByPath(absolutePath);
+                    hBox01.remove(0);
+                    hBox01.add(jScrollPane,0);
+                    workSpace.pack();
+                }
+            }
+        });
     }
 
     public static JScrollPane fileInfoTableInit(){
