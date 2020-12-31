@@ -1,5 +1,7 @@
 package com.teclan.desktop.client.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,33 @@ public class FileUtils {
     }
 
 
+    public static JTable fileInfoTableInit() {
+
+        Vector vData = new Vector();
+        Vector vName = new Vector();
+        vName.add("文件名");
+        vName.add("文件大小");
+        vName.add("修改时间");
+
+
+        Vector vRow = new Vector();
+        vRow.add("..");
+        vRow.add("");
+        vRow.add("");
+        vData.add(vRow);
+
+        DefaultTableModel model = new DefaultTableModel(vData, vName);
+        model.isCellEditable(-1,-1);
+        JTable table = new JTable(){
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        table.setModel(model);
+
+        return table;
+    }
+
     public static void flusFileListByPath(JTable jTable,String filePath) {
 
         Vector vData = new Vector();
@@ -58,6 +87,35 @@ public class FileUtils {
             vRow.add(file.getName());
             vRow.add(getFileSize(file));
             vRow.add(DateUtils.getDataString(file.lastModified()));
+            vData.add(vRow);
+        }
+        DefaultTableModel model = new DefaultTableModel(vData, vName);
+        jTable.setModel(model);
+    }
+
+
+    public static void flusFileList(JTable jTable, JSONObject jsonObject) throws Exception {
+
+        Vector vName = new Vector();
+
+        String[] headers = jsonObject.getString("headers").split(",");
+        JSONArray datas = jsonObject.getJSONArray("datas");
+        for(String item:headers){
+            vName.add(item);
+        }
+
+
+
+        Vector vData = new Vector();
+        for(int i=0;i<headers.length && datas!=null ;i++){
+          JSONObject data = datas.getJSONObject(i);
+            if(data.keySet().size()!=headers.length){
+                throw new Exception("列表数据列数与表头列数不一致");
+            }
+            Vector vRow = new Vector();
+            for(String key:data.keySet()){
+                vRow.add(data.getString(key));
+            }
             vData.add(vRow);
         }
         DefaultTableModel model = new DefaultTableModel(vData, vName);

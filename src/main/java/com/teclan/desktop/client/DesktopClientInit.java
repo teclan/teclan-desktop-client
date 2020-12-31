@@ -1,5 +1,7 @@
 package com.teclan.desktop.client;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.teclan.desktop.client.contant.Contant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
 import com.teclan.desktop.client.service.ClientService;
@@ -127,16 +129,24 @@ public class DesktopClientInit {
     /**
      * 设置主工作空间
      */
-    public static void showWorkSpace(String user) {
+    public static void showWorkSpace(String user) throws Exception {
 
         JFrame workSpace = new JFrame();
-        workSpace.setSize(1300, 700);
-        workSpace.setLocationRelativeTo(null);//在屏幕中居中显示
-        workSpace.setUndecorated(true);
+        workSpace.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
-        workSpace.setResizable(false);
-        workSpace.setLayout(new BorderLayout(20, 10)); // 水平间距 100 上下间距 10
+        workSpace.setUndecorated(true);
+        workSpace.setPreferredSize(new Dimension(1300, 800));
+        workSpace.setLocationRelativeTo(null);//在屏幕中居中显示
 
+//        Toolkit toolkit = Toolkit.getDefaultToolkit();
+//        int x = (int)(toolkit.getScreenSize().getWidth()-workSpace.getWidth())/2;
+//        int y = (int)(toolkit.getScreenSize().getHeight()-workSpace.getHeight())/2;
+//        workSpace.setLocation(x, y);
+//        workSpace.setPreferredSize(new Dimension(1300, 800));
+//        workSpace.setVisible(true);
+//        workSpace.setResizable(false);
+//        workSpace.setLayout(new BorderLayout(20, 10));
+        workSpace.pack();
 
         JPanel info = new JPanel();
         info.setLayout(new BorderLayout(20, 10));
@@ -151,7 +161,8 @@ public class DesktopClientInit {
         jtLocalPath.setBorder(Contant.BORDER);
         jtLocalPath.setPreferredSize(new Dimension(330, 30));
         jtLocalPath.setEditable(false);
-        jtLocalPath.setFont(Contant.FONT_SIZE_20);
+        jtLocalPath.setFont(new Font("宋体",Font.BOLD,14));
+        jtLocalPath.setScrollOffset(5);
         JButton chooser = new JButton("选择");
 
         chooser.setFont(Contant.FONT_SIZE_20);
@@ -173,7 +184,7 @@ public class DesktopClientInit {
         info.add(BorderLayout.EAST, remoteFilePath);
 
 
-        JTable localTable = fileInfoTableInit();
+        JTable localTable = FileUtils.fileInfoTableInit();
         JScrollPane localFileTable = new JScrollPane(localTable);
 
         JPanel option = new JPanel();
@@ -198,7 +209,15 @@ public class DesktopClientInit {
         option.add(getBlankButton());
 
 
-        JTable remotrTable = fileInfoTableInit();
+        JTable remotrTable = new JTable(){
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("headers","文件名,文件大小,最后修改日期,权限");
+        jsonObject.put("data",new JSONArray());
+        FileUtils.flusFileList(remotrTable,jsonObject);
         JScrollPane remoteFileTable = new JScrollPane(remotrTable);
         Box hBox01 = Box.createHorizontalBox();
         hBox01.add(localFileTable);
@@ -206,12 +225,15 @@ public class DesktopClientInit {
         hBox01.add(remoteFileTable);
 
         Box vBox = Box.createVerticalBox();
+        vBox.setSize(1300,700);
         vBox.add(hBox01);
 
         workSpace.add(BorderLayout.NORTH, info);
         workSpace.add(BorderLayout.CENTER, vBox);
 
         workSpace.setVisible(true);
+        workSpace.setLocationRelativeTo(null);
+        workSpace.pack();
 
         upload.addActionListener(new ActionListener() {
             @Override
@@ -227,8 +249,6 @@ public class DesktopClientInit {
         download.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
-                JTable remotrTable = (JTable) hBox01.getComponent(0);
                 int[] selectRowIdxs = remotrTable.getSelectedRows();
                 for (int index : selectRowIdxs) {
                     String absolutePath = (String) remotrTable.getValueAt(index, 0);
@@ -256,22 +276,11 @@ public class DesktopClientInit {
                     JScrollPane jScrollPane = new JScrollPane(localTable);
                     hBox01.remove(0);
                     hBox01.add(jScrollPane, 0);
+                    workSpace.setLocationRelativeTo(null);
                     workSpace.pack();
                 }
             }
         });
-    }
-
-    public static JTable fileInfoTableInit() {
-        String[] headers = new String[]{"文件名", "文件大小", "修改时间"};
-        Object[][] rows = new Object[][]{
-                new Object[]{"111.txt", "100M", "2020-12-31 08:06:23"},
-                new Object[]{"22222222222222222222222.txt", "100M", "2020-12-31 08:06:23"},
-                new Object[]{"3333333333.txt", "100M", "2020-12-31 08:06:23"},
-                new Object[]{"11888888888888888888888888888888881.txt", "100M", "2020-12-31 08:06:23"}
-        };
-        JTable table = new JTable(rows, headers);
-        return table;
     }
 
     private static JButton getBlankButton() {
