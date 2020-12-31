@@ -53,7 +53,7 @@ public class DefaultLoginActionListener implements ActionListener {
             clientService.login(user, pwd);
             logined = true;
             frame.setVisible(false);
-            DesktopClientInit.showWorkSpace(user);
+            DesktopClientInit.showWorkSpace(clientService,user);
             LOGGER.info("登录完成 ...");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

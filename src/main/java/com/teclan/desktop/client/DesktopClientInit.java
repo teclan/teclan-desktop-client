@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
@@ -129,7 +130,7 @@ public class DesktopClientInit {
     /**
      * 设置主工作空间
      */
-    public static void showWorkSpace(String user) throws Exception {
+    public static void showWorkSpace(ClientService clientService,String user) throws Exception {
 
         JFrame workSpace = new JFrame();
         workSpace.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -229,8 +230,7 @@ public class DesktopClientInit {
         vBox.add(hBox01);
 
         JPanel bottom = new JPanel();
-        JProgressBar progressBar=new JProgressBar();
-        progressBar.setValue(80);
+        final JProgressBar progressBar=new JProgressBar();
         progressBar.setSize(new Dimension(500, 1000));
         progressBar.setOrientation(JProgressBar.HORIZONTAL);
         progressBar.setMinimum(0);
@@ -239,9 +239,9 @@ public class DesktopClientInit {
 //        progressBar.setBackground(Color.pink);
         progressBar.setForeground(Color.GREEN);
 
-        JLabel file = new JLabel("122222");
+        JLabel uploadFile = new JLabel();
         bottom.add(BorderLayout.CENTER,progressBar);
-        bottom.add(BorderLayout.EAST,file);
+        bottom.add(BorderLayout.EAST,uploadFile);
 
         workSpace.add(BorderLayout.NORTH, info);
         workSpace.add(BorderLayout.CENTER, vBox);
@@ -255,13 +255,19 @@ public class DesktopClientInit {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int[] selectRowIdxs = localTable.getSelectedRows();
+                java.util.List<String> filePaths = new ArrayList<String>();
                 for (int index : selectRowIdxs) {
                     String absolutePath = (String) localTable.getValueAt(index, 0);
                     LOGGER.info("即将上传文件:{}", absolutePath);
+                    filePaths.add(absolutePath);
+                }
+                try {
+                    clientService.upload(progressBar,uploadFile,filePaths);
+                } catch (Exception e) {
+                  LOGGER.error(e.getMessage(),e);
                 }
             }
         });
-
         download.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
