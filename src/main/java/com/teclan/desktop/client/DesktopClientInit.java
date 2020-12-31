@@ -228,8 +228,24 @@ public class DesktopClientInit {
         vBox.setSize(1300,700);
         vBox.add(hBox01);
 
+        JPanel bottom = new JPanel();
+        JProgressBar progressBar=new JProgressBar();
+        progressBar.setValue(80);
+        progressBar.setSize(new Dimension(500, 1000));
+        progressBar.setOrientation(JProgressBar.HORIZONTAL);
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(100);
+        progressBar.setBorderPainted(true);
+//        progressBar.setBackground(Color.pink);
+        progressBar.setForeground(Color.GREEN);
+
+        JLabel file = new JLabel("122222");
+        bottom.add(BorderLayout.CENTER,progressBar);
+        bottom.add(BorderLayout.EAST,file);
+
         workSpace.add(BorderLayout.NORTH, info);
         workSpace.add(BorderLayout.CENTER, vBox);
+        workSpace.add(BorderLayout.SOUTH, bottom);
 
         workSpace.setVisible(true);
         workSpace.setLocationRelativeTo(null);
