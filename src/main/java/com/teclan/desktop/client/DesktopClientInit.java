@@ -20,7 +20,11 @@ import java.util.ArrayList;
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
     private static ActionListener defaultLoginActionListener;
-
+    public static  JTable REMOTE_FILE_TABLE = new JTable(){
+        public boolean isCellEditable(int row, int column){
+            return false;
+        }
+    };
     public static void initLoginFrem(ClientService clientService) {
 
         /**
@@ -217,16 +221,11 @@ public class DesktopClientInit {
         option.add(getBlankButton());
 
 
-        JTable remotrTable = new JTable(){
-            public boolean isCellEditable(int row, int column){
-                return false;
-            }
-        };
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("headers","文件名,文件大小,最后修改日期,权限");
-        jsonObject.put("data",new JSONArray());
-        FileUtils.flusFileList(remotrTable,jsonObject);
-        JScrollPane remoteFileTable = new JScrollPane(remotrTable);
+//        jsonObject.put("headers","文件名,文件大小,最后修改日期,权限");
+//        jsonObject.put("datas",new JSONArray());
+//        FileUtils.flusFileList(REMOTE_FILE_TABLE,jsonObject);
+        JScrollPane remoteFileTable = new JScrollPane(REMOTE_FILE_TABLE);
         Box hBox01 = Box.createHorizontalBox();
         hBox01.add(localFileTable);
         hBox01.add(option);
@@ -274,7 +273,7 @@ public class DesktopClientInit {
                     });
                 }else {
                     // 加载远程文件列表
-                    clientService.reloadRemoteFileList(remotrTable,remoteFilePath);
+                    clientService.reloadRemoteFileList(REMOTE_FILE_TABLE,remoteFilePath);
                 }
             }
         });
@@ -299,9 +298,9 @@ public class DesktopClientInit {
         download.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int[] selectRowIdxs = remotrTable.getSelectedRows();
+                int[] selectRowIdxs = REMOTE_FILE_TABLE.getSelectedRows();
                 for (int index : selectRowIdxs) {
-                    String absolutePath = (String) remotrTable.getValueAt(index, 0);
+                    String absolutePath = (String) REMOTE_FILE_TABLE.getValueAt(index, 0);
                     LOGGER.info("即将下载文件:{}", absolutePath);
                 }
             }

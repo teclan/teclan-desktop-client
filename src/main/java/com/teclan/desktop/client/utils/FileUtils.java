@@ -101,22 +101,23 @@ public class FileUtils {
 
         Vector vName = new Vector();
 
-        String[] headers = jsonObject.getString("headers").split(",");
-        JSONArray datas = jsonObject.getJSONArray("datas");
-        for(String item:headers){
-            vName.add(item);
+        JSONObject headers = jsonObject.getJSONObject("headers");
+
+        for(String key:headers.keySet()){
+            vName.add(headers.getString(key));
         }
 
+        JSONArray datas = jsonObject.getJSONArray("datas");
 
 
         Vector vData = new Vector();
-        for(int i=0;i<headers.length && datas!=null ;i++){
-          JSONObject data = datas.getJSONObject(i);
-            if(data.keySet().size()!=headers.length){
+        for(int i=0;i<datas.size()  ;i++){
+            JSONObject data = datas.getJSONObject(i);
+            if(data.keySet().size()!=headers.keySet().size()){
                 throw new Exception("列表数据列数与表头列数不一致");
             }
             Vector vRow = new Vector();
-            for(String key:data.keySet()){
+            for(String key:headers.keySet()){
                 vRow.add(data.getString(key));
             }
             vData.add(vRow);

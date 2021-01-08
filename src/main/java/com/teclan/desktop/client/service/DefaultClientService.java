@@ -1,7 +1,10 @@
 package com.teclan.desktop.client.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.teclan.desktop.client.DesktopClientInit;
 import com.teclan.desktop.client.config.CommonConfig;
+import com.teclan.desktop.client.contant.Constant;
 import com.teclan.desktop.client.utils.Assert;
 import com.teclan.desktop.client.utils.FileUtils;
 import com.teclan.desktop.client.utils.HttpUtils;
@@ -19,20 +22,36 @@ import java.util.Map;
 public class DefaultClientService implements ClientService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClientService.class);
 
+    private  FileClient fileClient;
+
     public void login(String account, String password) throws Exception {
         LOGGER.info("正在登录，账号:{},密码:{}", account, password);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("account",account);
-        jsonObject.put("password",password);
+        jsonObject.put("account", account);
+        jsonObject.put("password", password);
 
-       String baseUrl =  CommonConfig.getConfig().getString("server.base_url");
-       JSONObject bodey = HttpUtils.post("login.do",jsonObject);
-       LOGGER.info("登录返回：{}",bodey);
-       String code = bodey.getString("code");
-       if(Assert.assertNotEquals("200",code)){
-            throw new Exception(bodey.getString("message"));
-       }
-       startFileClient();
+        JSONObject body = HttpUtils.post("login.do", jsonObject);
+        LOGGER.info("登录返回：{}", body);
+        String code = body.getString("code");
+        if (Assert.assertNotEquals("200", code)) {
+            throw new Exception(body.getString("message"));
+        } else {
+            JSONObject data = body.getJSONObject("data");
+            Constant.USER = data.getString("user");
+            Constant.TOKEN = data.getString("token");
+        }
+
+        body = HttpUtils.get("file/list.do?path=E:\\remote");
+        code = body.getString("code");
+        if (Assert.assertNotEquals("200", code)) {
+            throw new Exception(body.getString("message"));
+        } else {
+            JSONObject data = body.getJSONObject("data");
+            LOGGER.info("查询文件列表返回:{}",data );
+            FileUtils.flusFileList(DesktopClientInit.REMOTE_FILE_TABLE, body.getJSONObject("data"));
+        }
+
+        startFileClient();
     }
 
     @Override
@@ -108,7 +127,7 @@ public class DefaultClientService implements ClientService {
             }
         });
 
-        FileClient fileClient = new FileClient(CommonConfig.getConfig().getString("server.file.host"), CommonConfig.getConfig().getInt("server.file.port"));
+        fileClient = new FileClient(CommonConfig.getConfig().getString("server.file.host"), CommonConfig.getConfig().getInt("server.file.port"));
         fileClient.start();
     }
 
