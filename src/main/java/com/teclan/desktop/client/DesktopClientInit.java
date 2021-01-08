@@ -2,12 +2,13 @@ package com.teclan.desktop.client;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.teclan.desktop.client.contant.Contant;
+import com.teclan.desktop.client.contant.Constant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
 import com.teclan.desktop.client.service.ClientService;
 import com.teclan.desktop.client.utils.Assert;
 import com.teclan.desktop.client.utils.DialogUtils;
 import com.teclan.desktop.client.utils.FileUtils;
+import com.teclan.desktop.client.utils.MoveLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,23 +37,23 @@ public class DesktopClientInit {
 
         // 无设置信息，仅作为占位排版使用
         JPanel jpNothing = new JPanel();
-        JLabel jlNothing = new JLabel(Contant.SYSTEM);
-        jlNothing.setFont(Contant.FONT_SIZE_20);
+        JLabel jlNothing = new JLabel(Constant.SYSTEM);
+        jlNothing.setFont(Constant.FONT_SIZE_20);
         jpNothing.add(jlNothing);
         // 账号信息面板
         JPanel jpAccount = new JPanel();
         JLabel jlAccount = new JLabel("账号：");
-        jlAccount.setFont(Contant.FONT_SIZE_20);
+        jlAccount.setFont(Constant.FONT_SIZE_20);
         final JTextField account = new JTextField(10);
-        account.setFont(Contant.FONT_SIZE_20);
+        account.setFont(Constant.FONT_SIZE_20);
         jpAccount.add(jlAccount);
         jpAccount.add(account);
         // 密码信息面板
         JPanel jpPassword = new JPanel();
         JLabel jlPassword = new JLabel("密码：");
-        jlPassword.setFont(Contant.FONT_SIZE_20);
+        jlPassword.setFont(Constant.FONT_SIZE_20);
         final JPasswordField password = new JPasswordField(10);
-        password.setFont(Contant.FONT_SIZE_20);
+        password.setFont(Constant.FONT_SIZE_20);
         jpPassword.add(jlPassword);
         jpPassword.add(password);
 
@@ -61,7 +62,7 @@ public class DesktopClientInit {
          */
         JPanel jpReset = new JPanel();
         JButton reset = new JButton("重置");
-        reset.setFont(Contant.FONT_SIZE_20);
+        reset.setFont(Constant.FONT_SIZE_20);
         reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 account.setText("");
@@ -69,7 +70,7 @@ public class DesktopClientInit {
             }
         });
         final JButton login = new JButton("登录");
-        login.setFont(Contant.FONT_SIZE_20);
+        login.setFont(Constant.FONT_SIZE_20);
 
         defaultLoginActionListener = new DefaultLoginActionListener(clientService, loginFrem, account, password);
         login.addActionListener(defaultLoginActionListener);
@@ -79,7 +80,7 @@ public class DesktopClientInit {
          * 版权信息面板
          */
         JPanel jpCopyRight = new JPanel();
-        JLabel jlCopyRight = new JLabel(Contant.COPYRIGHT);
+        JLabel jlCopyRight = new JLabel(Constant.COPYRIGHT);
         jpCopyRight.add(jlCopyRight);
 
 
@@ -153,22 +154,23 @@ public class DesktopClientInit {
 
         JPanel info = new JPanel();
         info.setLayout(new BorderLayout(20, 10));
-        JLabel userAndService = new JLabel("当前登录用户:" + user + "                                                服务器:" + Contant.SERVER_ADDRESS);
-        userAndService.setFont(Contant.FONT_SIZE_20);
+        MoveLabel userAndService = new MoveLabel("当前登录用户:" + user + "  服务器:" + Constant.SERVER_ADDRESS);
+        userAndService.setFont(Constant.FONT_SIZE_20);
+        userAndService.setForeground(Color.BLUE);
         info.add(BorderLayout.NORTH, userAndService);
 
         JPanel LocalFilePath = new JPanel();
         JLabel jlLocalPath = new JLabel("本地文件路径:");
-        jlLocalPath.setFont(Contant.FONT_SIZE_20);
+        jlLocalPath.setFont(Constant.FONT_SIZE_20);
         final JTextField jtLocalPath = new JTextField();
-        jtLocalPath.setBorder(Contant.BORDER);
+        jtLocalPath.setBorder(Constant.BORDER);
         jtLocalPath.setPreferredSize(new Dimension(330, 30));
         jtLocalPath.setEditable(false);
         jtLocalPath.setFont(new Font("宋体",Font.BOLD,14));
         jtLocalPath.setScrollOffset(5);
         JButton chooser = new JButton("选择");
 
-        chooser.setFont(Contant.FONT_SIZE_20);
+        chooser.setFont(Constant.FONT_SIZE_20);
         LocalFilePath.add(jlLocalPath);
         LocalFilePath.add(jtLocalPath);
         LocalFilePath.add(chooser);
@@ -176,14 +178,14 @@ public class DesktopClientInit {
 
         JPanel remoteFilePath = new JPanel();
         JLabel jlRemotePath = new JLabel("服务器文件路径:");
-        jlRemotePath.setFont(Contant.FONT_SIZE_20);
+        jlRemotePath.setFont(Constant.FONT_SIZE_20);
         JTextField jtRemotePath = new JTextField();
-        jtRemotePath.setBorder(Contant.BORDER);
+        jtRemotePath.setBorder(Constant.BORDER);
         jtRemotePath.setPreferredSize(new Dimension(330, 30));
         JButton open = new JButton("刷新");
         open.setFont(new Font("宋体",Font.BOLD,14));
 //        jtRemotePath.setEditable(false);
-        jtRemotePath.setFont(Contant.FONT_SIZE_20);
+        jtRemotePath.setFont(Constant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(jtRemotePath);
         remoteFilePath.add(open);
@@ -244,7 +246,7 @@ public class DesktopClientInit {
 //        progressBar.setBackground(Color.pink);
         progressBar.setForeground(Color.GREEN);
         JLabel uploadFile = new JLabel();
-        JLabel copyRight = new JLabel("                                                           "+Contant.COPYRIGHT);
+        JLabel copyRight = new JLabel("                                                           "+ Constant.COPYRIGHT);
         copyRight.setFont(new Font("宋体",Font.BOLD,16));
         copyRight.setSize(new Dimension(500, 1000));
         bottom.add(BorderLayout.NORTH,progressBar);

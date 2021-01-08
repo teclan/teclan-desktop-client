@@ -1,6 +1,6 @@
 package com.teclan.desktop.client.utils;
 
-import com.teclan.desktop.client.contant.Contant;
+import com.teclan.desktop.client.contant.Constant;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +47,7 @@ public class DialogUtils {
 
         JTextArea jt = new JTextArea(sb.toString());
         jt.setEditable(false);
-        jt.setFont(Contant.FONT_SIZE_20);
+        jt.setFont(Constant.FONT_SIZE_20);
         jFrame.addWindowListener(windowAdapter);
         container.add(jt);
         jFrame.pack();

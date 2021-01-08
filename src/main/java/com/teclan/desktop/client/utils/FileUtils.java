@@ -2,11 +2,13 @@ package com.teclan.desktop.client.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.teclan.desktop.client.contant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Vector;
@@ -57,6 +59,7 @@ public class FileUtils {
                 return false;
             }
         };
+        table.setFont(new Font("",Font.PLAIN,14));
         table.setModel(model);
 
         return table;
