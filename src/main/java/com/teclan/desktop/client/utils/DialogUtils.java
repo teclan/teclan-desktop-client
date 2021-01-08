@@ -28,12 +28,30 @@ public class DialogUtils {
         jFrame.setLocationRelativeTo(null);//在屏幕中居中显示
         jFrame.setResizable(false);
         Container container=jFrame.getContentPane();//将窗体转化为容器
-        JButton jb=new JButton(message);
-        jb.setFont(Contant.FONT_SIZE_20);
+
+        StringBuffer sb = new StringBuffer();
+        int size =40;
+        if(message.length()>size){
+            int offset =0;
+            for(int i=0;i<message.length()/size;i++){
+                sb.append(message.substring(offset,offset+size)).append("\n");
+                offset+=size;
+            }
+            sb.append(message.substring(offset,message.length()));
+        }else {
+            while (message.length()<size){
+                message+=" ";
+            }
+            sb.append(message);
+        }
+
+        JTextArea jt = new JTextArea(sb.toString());
+        jt.setEditable(false);
+        jt.setFont(Contant.FONT_SIZE_20);
         jFrame.addWindowListener(windowAdapter);
-        container.add(jb);
-        jFrame.setVisible(true);//使窗体可见
+        container.add(jt);
         jFrame.pack();
+        jFrame.setVisible(true);//使窗体可见
     }
 
 }
