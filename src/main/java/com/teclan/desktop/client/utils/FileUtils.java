@@ -12,8 +12,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class FileUtils {
@@ -64,6 +66,44 @@ public class FileUtils {
         };
         table.setFont(new Font("",Font.PLAIN,14));
         table.setModel(model);
+
+        table.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton()==MouseEvent.BUTTON1 && mouseEvent.getClickCount()==2){
+                    int focusedRowIndex = table.rowAtPoint(mouseEvent.getPoint());
+                    if (focusedRowIndex == -1) {
+                        return;
+                    }
+                    table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                    int[] selectRowIdxs = table.getSelectedRows();
+                    for (int index : selectRowIdxs) {
+                        String fileName = (String) table.getValueAt(index, 0);
+                        LOGGER.info("双击文件:{}", fileName);
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {
+
+            }
+        });
 
         return table;
     }

@@ -14,4 +14,5 @@ public class Constant {
     public static MatteBorder BORDER = new MatteBorder(2, 2, 2, 2, new Color(192, 192, 192));
     public static String USER ="";
     public static String TOKEN ="";
+    public static String REMOTE_ROOT="";
 }

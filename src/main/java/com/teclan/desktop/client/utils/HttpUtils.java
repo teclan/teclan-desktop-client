@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.teclan.desktop.client.config.CommonConfig;
 import com.teclan.desktop.client.contant.Constant;
+import com.teclan.desktop.client.service.DefaultClientService;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,15 @@ public class HttpUtils {
     private static String BASRURL = CommonConfig.getConfig().getString("server.base_url");
 
     private static String[] getDefaultHeaders(){
-        return new String[]{"user", Constant.USER,"token",Constant.TOKEN};
+
+        String tunnel = "";
+
+        try {
+            tunnel = DefaultClientService.getFileClient().getFileClientHandler().getCtx().channel().localAddress().toString();
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+        }
+        return new String[]{"user", Constant.USER,"token",Constant.TOKEN,"tunnel",tunnel};
     }
 
     public static JSONObject get(String url) throws IOException {

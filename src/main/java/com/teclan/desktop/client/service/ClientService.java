@@ -12,7 +12,7 @@ public interface ClientService {
 
     public void upload(JProgressBar jProgressBar,String local,String remote, JLabel jLabel,List<String> filePaths) throws Exception;
 
-    public void download(JProgressBar jProgressBar,String remote, JLabel jLabel,List<String> filePaths) throws Exception;
+    public void download(JProgressBar jProgressBar,String local,String remote, JLabel jLabel,List<String> filePaths) throws Exception;
 
     public void delete(String remote,JTable jTable,List<String> filePaths) throws Exception;
 

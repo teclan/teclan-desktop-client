@@ -142,9 +142,9 @@ public class DesktopClientInit {
 
         JFrame workSpace = new JFrame();
         workSpace.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
+//        workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         workSpace.setUndecorated(true);
-        workSpace.setPreferredSize(new Dimension(1300, 800));
+        workSpace.setPreferredSize(new Dimension(1800, 1000));
         workSpace.setLocationRelativeTo(null);//在屏幕中居中显示
 
 //        Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -187,13 +187,13 @@ public class DesktopClientInit {
         JTextField jtRemotePath = new JTextField("/");
         jtRemotePath.setBorder(Constant.BORDER);
         jtRemotePath.setPreferredSize(new Dimension(330, 30));
-        JButton open = new JButton("刷新");
-        open.setFont(new Font("宋体",Font.BOLD,14));
+        JButton flush = new JButton("刷新");
+        flush.setFont(new Font("宋体",Font.BOLD,14));
 //        jtRemotePath.setEditable(false);
         jtRemotePath.setFont(Constant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(jtRemotePath);
-        remoteFilePath.add(open);
+        remoteFilePath.add(flush);
         info.add(BorderLayout.EAST, remoteFilePath);
 
 
@@ -230,10 +230,12 @@ public class DesktopClientInit {
 //        jsonObject.put("headers","文件名,文件大小,最后修改日期,权限");
 //        jsonObject.put("datas",new JSONArray());
 //        FileUtils.flusFileList(REMOTE_FILE_TABLE,jsonObject);
+        REMOTE_FILE_TABLE.setFont(new Font("",Font.PLAIN,14));
         JScrollPane remoteFileTable = new JScrollPane(REMOTE_FILE_TABLE);
         Box hBox01 = Box.createHorizontalBox();
         hBox01.add(localFileTable);
         hBox01.add(option);
+
         hBox01.add(remoteFileTable);
 
         Box vBox = Box.createVerticalBox();
@@ -250,7 +252,7 @@ public class DesktopClientInit {
 //        progressBar.setBackground(Color.pink);
         progressBar.setForeground(Color.GREEN);
         JLabel uploadFile = new JLabel();
-        JLabel copyRight = new JLabel("                                                           "+ Constant.COPYRIGHT);
+        JLabel copyRight = new JLabel("                                                                                  "+ Constant.COPYRIGHT);
         copyRight.setFont(new Font("宋体",Font.BOLD,16));
         copyRight.setSize(new Dimension(500, 1000));
         bottom.add(BorderLayout.NORTH,progressBar);
@@ -266,7 +268,7 @@ public class DesktopClientInit {
         workSpace.setLocationRelativeTo(null);
         workSpace.pack();
 
-        open.addActionListener(new ActionListener() {
+        flush.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 String remoteFilePath = jtRemotePath.getText();
@@ -297,6 +299,7 @@ public class DesktopClientInit {
                     clientService.upload(progressBar,jtLocalPath.getText(),jtRemotePath.getText(),uploadFile,filePaths);
                 } catch (Exception e) {
                   LOGGER.error(e.getMessage(),e);
+                  DialogUtils.showError(e.getMessage());
                 }
             }
         });
@@ -311,9 +314,10 @@ public class DesktopClientInit {
                     paths.add((String) REMOTE_FILE_TABLE.getValueAt(index, 0));
                 }
                 try {
-                    clientService.download(progressBar,jlRemotePath.getText(),uploadFile,paths);
+                    clientService.download(progressBar,jtLocalPath.getText(),jtRemotePath.getText(),uploadFile,paths);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(),e);
+                    DialogUtils.showError(e.getMessage());
                 }
             }
         });
@@ -331,15 +335,19 @@ public class DesktopClientInit {
                     clientService.delete(jtRemotePath.getText(),REMOTE_FILE_TABLE,paths);
                 } catch (Exception e) {
                    LOGGER.error(e.getMessage(),e);
+                    DialogUtils.showError(e.getMessage());
                 }
             }
         });
 
         chooser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {  //按钮点击事件
-                JFileChooser chooser = new JFileChooser();             //设置选择器
+                JFileChooser chooser = new JFileChooser();
                 chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                chooser.setMultiSelectionEnabled(true);             //设为多选
+                chooser.setMultiSelectionEnabled(true);
+                chooser.setOpaque(false);
+                chooser.setDialogTitle("选择本地文件...");
+                chooser.setFont(new Font("",Font.PLAIN,20));
                 int returnVal = chooser.showOpenDialog(chooser);        //是否打开文件选择框
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
