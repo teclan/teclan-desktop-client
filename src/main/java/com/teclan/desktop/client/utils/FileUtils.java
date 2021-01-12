@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Vector;
@@ -94,6 +97,49 @@ public class FileUtils {
         }
         DefaultTableModel model = new DefaultTableModel(vData, vName);
         jTable.setModel(model);
+        jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+    }
+
+    private static void createPopupMenu4Remote(JTable jTable){
+        JPopupMenu jPopupMenu = new JPopupMenu();
+        JMenuItem setPrivate = new JMenuItem();
+        setPrivate.setOpaque(false);
+        setPrivate.setText("  设为隐私文件  ");
+        setPrivate.setFont(Constant.FONT);
+        setPrivate.setBackground(Color.gray);
+        setPrivate.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+               LOGGER.info("设为隐私文件...");
+            }
+        });
+        jPopupMenu.add(setPrivate);
+
+        JMenuItem setPublic = new JMenuItem();
+        setPrivate.setOpaque(false);
+        setPublic.setText("  设为公开文件  ");
+        setPublic.setFont(Constant.FONT);
+        setPrivate.setBackground(Color.gray);
+        setPublic.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LOGGER.info("设为公开文件...");
+            }
+        });
+        jPopupMenu.add(setPublic);
+
+        jTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+                    int focusedRowIndex = jTable.rowAtPoint(evt.getPoint());
+                    if (focusedRowIndex == -1) {
+                        return;
+                    }
+                    jTable.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                    jPopupMenu.show(jTable, evt.getX(), evt.getY());
+                }
+            }
+        });
     }
 
 
@@ -124,6 +170,8 @@ public class FileUtils {
         }
         DefaultTableModel model = new DefaultTableModel(vData, vName);
         jTable.setModel(model);
+
+        createPopupMenu4Remote(jTable);
     }
 
     private static String getFileSize(File file) {

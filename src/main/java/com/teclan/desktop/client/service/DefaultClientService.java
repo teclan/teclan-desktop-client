@@ -6,6 +6,7 @@ import com.teclan.desktop.client.DesktopClientInit;
 import com.teclan.desktop.client.config.CommonConfig;
 import com.teclan.desktop.client.contant.Constant;
 import com.teclan.desktop.client.utils.Assert;
+import com.teclan.desktop.client.utils.DialogUtils;
 import com.teclan.desktop.client.utils.FileUtils;
 import com.teclan.desktop.client.utils.HttpUtils;
 import org.slf4j.Logger;
@@ -41,22 +42,27 @@ public class DefaultClientService implements ClientService {
             Constant.TOKEN = data.getString("token");
         }
 
-        body = HttpUtils.get("file/list.do?path=E:\\remote");
-        code = body.getString("code");
-        if (Assert.assertNotEquals("200", code)) {
-            throw new Exception(body.getString("message"));
-        } else {
-            JSONObject data = body.getJSONObject("data");
-            LOGGER.info("查询文件列表返回:{}",data );
-            FileUtils.flusFileList(DesktopClientInit.REMOTE_FILE_TABLE, body.getJSONObject("data"));
-        }
-
+        reloadRemoteFileList(DesktopClientInit.REMOTE_FILE_TABLE,"/");
         startFileClient();
     }
 
     @Override
-    public void upload(JProgressBar jProgressBar, JLabel jLabel, List<String> filePaths) throws Exception {
+    public void upload(JProgressBar jProgressBar,String local,String remote, JLabel jLabel, List<String> filePaths) throws Exception {
         int index = 1;
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("remote",remote);
+        jsonObject.put("local",local);
+        jsonObject.put("paths",filePaths);
+        JSONObject body = HttpUtils.post("file/upload.do",jsonObject);
+        String code = body.getString("code");
+        if (Assert.assertNotEquals("200", code)) {
+            LOGGER.error(body.getString("message"));
+            DialogUtils.showError(body.getString("message"));
+            return;
+        }
+
         for (String filePath : filePaths) {
             jProgressBar.setValue(0);
             jLabel.setText(String.format("当前:%s (上传进度：%d/%d),", filePath, index++, filePaths.size()));
@@ -66,7 +72,19 @@ public class DefaultClientService implements ClientService {
     }
 
     @Override
-    public void download(JProgressBar jProgressBar, JLabel jLabel, List<String> filePaths) throws Exception {
+    public void download(JProgressBar jProgressBar,String remote, JLabel jLabel,List<String> filePaths) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("remote",remote);
+        jsonObject.put("paths",filePaths);
+        JSONObject body = HttpUtils.post("file/download.do",jsonObject);
+        String code = body.getString("code");
+        if (Assert.assertNotEquals("200", code)) {
+            LOGGER.error(body.getString("message"));
+            DialogUtils.showError(body.getString("message"));
+            return;
+        }
+
         int index = 1;
         for (String filePath : filePaths) {
             jProgressBar.setValue(0);
@@ -77,15 +95,35 @@ public class DefaultClientService implements ClientService {
     }
 
     @Override
+    public void delete(String remote,JTable jTable,List<String> filePaths) throws Exception{
+          JSONObject jsonObject = new JSONObject();
+          jsonObject.put("remote",remote);
+          jsonObject.put("paths",filePaths);
+         JSONObject body = HttpUtils.post("file/delete.do",jsonObject);
+         String code = body.getString("code");
+         if (Assert.assertNotEquals("200", code)) {
+            throw new Exception(body.getString("message"));
+        }
+        reloadRemoteFileList(jTable,remote);
+    }
+
+    @Override
     public void reloadRemoteFileList(JTable jTable, String remoteFilePath) {
         LOGGER.info("即将获取服务器文件列表：{}", remoteFilePath);
-        // TODO
-        // 获取远程文件列表
-        JSONObject jsonObject = new JSONObject();
+
         try {
-            FileUtils.flusFileList(jTable, jsonObject);
+            JSONObject body = HttpUtils.get("file/list.do?path="+remoteFilePath);
+            String code = body.getString("code");
+            if (Assert.assertNotEquals("200", code)) {
+                throw new Exception(body.getString("message"));
+            } else {
+                JSONObject data = body.getJSONObject("data");
+                LOGGER.info("查询文件列表返回:{}",data );
+                FileUtils.flusFileList(DesktopClientInit.REMOTE_FILE_TABLE, data);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            DialogUtils.showError(e.getMessage());
         }
 
     }

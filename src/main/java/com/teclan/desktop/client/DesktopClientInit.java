@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
@@ -183,7 +184,7 @@ public class DesktopClientInit {
         JPanel remoteFilePath = new JPanel();
         JLabel jlRemotePath = new JLabel("服务器文件路径:");
         jlRemotePath.setFont(Constant.FONT_SIZE_20);
-        JTextField jtRemotePath = new JTextField();
+        JTextField jtRemotePath = new JTextField("/");
         jtRemotePath.setBorder(Constant.BORDER);
         jtRemotePath.setPreferredSize(new Dimension(330, 30));
         JButton open = new JButton("刷新");
@@ -204,15 +205,19 @@ public class DesktopClientInit {
         option.setLayout(gridLayout);
 
 
-        JButton upload = new JButton("上传");
-        JButton download = new JButton("下载");
+        JButton upload = new JButton(" 上       传 ");
+        upload.setFont(Constant.FONT);
+        JButton download = new JButton(" 下     载 ");
+        download.setFont(Constant.FONT);
         option.add(getBlankButton());
         option.add(getBlankButton());
         option.add(upload);
         option.add(getBlankButton());
         option.add(download);
         option.add(getBlankButton());
-        option.add(getBlankButton());
+        JButton delete = new JButton("删除远程文件");
+        delete.setFont(Constant.FONT);
+        option.add(delete);
         option.add(getBlankButton());
         option.add(getBlankButton());
         option.add(getBlankButton());
@@ -289,7 +294,7 @@ public class DesktopClientInit {
                     filePaths.add(absolutePath);
                 }
                 try {
-                    clientService.upload(progressBar,uploadFile,filePaths);
+                    clientService.upload(progressBar,jtLocalPath.getText(),jtRemotePath.getText(),uploadFile,filePaths);
                 } catch (Exception e) {
                   LOGGER.error(e.getMessage(),e);
                 }
@@ -299,9 +304,33 @@ public class DesktopClientInit {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int[] selectRowIdxs = REMOTE_FILE_TABLE.getSelectedRows();
+                List<String> paths = new ArrayList<>();
                 for (int index : selectRowIdxs) {
                     String absolutePath = (String) REMOTE_FILE_TABLE.getValueAt(index, 0);
                     LOGGER.info("即将下载文件:{}", absolutePath);
+                    paths.add((String) REMOTE_FILE_TABLE.getValueAt(index, 0));
+                }
+                try {
+                    clientService.download(progressBar,jlRemotePath.getText(),uploadFile,paths);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(),e);
+                }
+            }
+        });
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int[] selectRowIdxs = REMOTE_FILE_TABLE.getSelectedRows();
+                List<String> paths = new ArrayList<>();
+                for (int index : selectRowIdxs) {
+                    String absolutePath = (String) REMOTE_FILE_TABLE.getValueAt(index, 0);
+                    LOGGER.info("即将删除远程文件:{}", absolutePath);
+                    paths.add( (String) REMOTE_FILE_TABLE.getValueAt(index, 0));
+                }
+                try {
+                    clientService.delete(jtRemotePath.getText(),REMOTE_FILE_TABLE,paths);
+                } catch (Exception e) {
+                   LOGGER.error(e.getMessage(),e);
                 }
             }
         });

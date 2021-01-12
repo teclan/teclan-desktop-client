@@ -8,6 +8,12 @@ import java.awt.event.WindowAdapter;
 
 public class DialogUtils {
 
+    public static void showError(String message){
+        show(message,JRootPane.ERROR_DIALOG,new WindowAdapter(){
+
+        });
+    }
+
     public static void showError(String message, WindowAdapter windowAdapter){
         show(message,JRootPane.ERROR_DIALOG,windowAdapter);
     }
