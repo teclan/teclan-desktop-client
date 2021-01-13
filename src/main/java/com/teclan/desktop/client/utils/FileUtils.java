@@ -50,12 +50,14 @@ public class FileUtils {
         Vector vData = new Vector();
         Vector vName = new Vector();
         vName.add("文件名");
+        vName.add("文件类型");
         vName.add("文件大小");
         vName.add("修改时间");
 
 
         Vector vRow = new Vector();
         vRow.add("..");
+        vRow.add("上级目录");
         vRow.add("");
         vRow.add("");
         vData.add(vRow);
@@ -83,6 +85,29 @@ public class FileUtils {
                     for (int index : selectRowIdxs) {
                         String fileName = (String) table.getValueAt(index, 0);
                         LOGGER.info("双击文件:{}", fileName);
+                        String local = DesktopClientInit.JT_LOCAL_FILE_PATH.getText();
+                        if("".equals(local)){
+                            return;
+                        }
+
+                        if("..".equals(fileName) && !"".equals(DesktopClientInit.JT_LOCAL_FILE_PATH.getText())){
+                            local = new File(local).getParentFile().getAbsolutePath();
+                            DesktopClientInit.JT_LOCAL_FILE_PATH.setText(afterFormatFilePath(local));
+                            flusFileListByPath(table,local);
+                        }else {
+                            local = local+"/"+fileName;
+
+                            File file = new File(local);
+                            if(!file.exists()){
+                                return;
+                            }
+                            if(file.isDirectory()){
+                                flusFileListByPath(table,local);
+                            }else {
+                                open(file);
+                            }
+                            DesktopClientInit.JT_LOCAL_FILE_PATH.setText(afterFormatFilePath(local));
+                        }
                     }
                 }
             }
@@ -116,17 +141,15 @@ public class FileUtils {
         Vector vData = new Vector();
         Vector vName = new Vector();
         vName.add("文件名");
+        vName.add("文件类型");
         vName.add("文件大小");
         vName.add("修改时间");
 
         File[] files = getFileList(filePath);
 
-        Object[][] rows = new Object[files.length + 1][3];
-        rows[0] = new Object[]{"..", "", ""};
-
         Vector vRow = new Vector();
         vRow.add("..");
-        vRow.add("");
+        vRow.add("上级目录");
         vRow.add("");
         vData.add(vRow);
 
@@ -134,6 +157,7 @@ public class FileUtils {
             File file = files[i];
             vRow = new Vector();
             vRow.add(file.getName());
+            vRow.add(file.isDirectory()?"文件夹":getSuffix(file));
             vRow.add(getFileSize(file));
             vRow.add(DateUtils.getDataString(file.lastModified()));
             vData.add(vRow);
@@ -142,6 +166,16 @@ public class FileUtils {
         jTable.setModel(model);
         jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+    }
+
+    public static String getSuffix(File file) {
+        String fileName = file.getName();
+        LOGGER.debug("即将解析文件类型:{}",fileName);
+        String suffix = "未知";
+        if (fileName.lastIndexOf(".") > 0) {
+            suffix = fileName.substring(fileName.lastIndexOf("."));
+        }
+        return suffix;
     }
 
     private static void createPopupMenu4Remote(JTable jTable){
@@ -163,7 +197,7 @@ public class FileUtils {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("path", Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"");
                     try {
-                        JSONObject body = HttpUtils.post("file/setPricate.do", jsonObject);
+                        JSONObject body = HttpUtils.post("file/setPrivate.do", jsonObject);
                         String code = body.getString("code");
                         if (Assert.assertNotEquals("200", code)) {
                             throw new Exception(body.getString("message"));
@@ -312,5 +346,36 @@ public class FileUtils {
         abps.add(file.getAbsolutePath().replace(prefix,"").replace("\\","/"));
 
         return abps;
+    }
+
+    public static String afterFormatFilePath(String abp){
+
+        while (abp.indexOf("\\")>=0){
+            abp = abp.replace("\\","/");
+        }
+
+        while (abp.indexOf("//")>=0){
+            abp = abp.replace("//","/");
+        }
+        return abp;
+    }
+
+    public static void open(File file){
+        if(!file.exists()){
+            LOGGER.warn("文件不存在,{}",file.getAbsolutePath());
+            return;
+        }
+        open(file.getAbsolutePath());
+    }
+
+    private static void open(String filePath){
+        final Runtime runtime = Runtime.getRuntime();
+        Process process = null;
+        final String cmd = "rundll32 url.dll FileProtocolHandler file://"+filePath;//要打开的文件路径。
+        try {
+            process = runtime.exec(cmd);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(),e);
+        }
     }
 }

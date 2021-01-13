@@ -67,12 +67,9 @@ public class DefaultClientService implements ClientService {
         }
 
         int index = 1;
-        remote = Constant.REMOTE_ROOT+"/"+remote;
+        remote =FileUtils.afterFormatFilePath(Constant.REMOTE_ROOT+"/"+remote);
         JSONObject jsonObject = new JSONObject();
 
-        while (remote.indexOf("\\")>0){
-            remote = remote.replace("\\","/").replace("//","/");
-        }
         jsonObject.put("remote",remote);
         jsonObject.put("local", local);
         jsonObject.put("paths", Objects.list2JSONArray(paths));

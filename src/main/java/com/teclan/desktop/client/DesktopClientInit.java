@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +26,73 @@ public class DesktopClientInit {
             return false;
         }
     };
+
+    static {
+
+        REMOTE_FILE_TABLE.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton()==MouseEvent.BUTTON1 && mouseEvent.getClickCount()==2){
+                    int focusedRowIndex = REMOTE_FILE_TABLE.rowAtPoint(mouseEvent.getPoint());
+                    if (focusedRowIndex == -1) {
+                        return;
+                    }
+                    REMOTE_FILE_TABLE.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                    int[] selectRowIdxs = REMOTE_FILE_TABLE.getSelectedRows();
+                    for (int index : selectRowIdxs) {
+                        String fileName = (String) REMOTE_FILE_TABLE.getValueAt(index, 0);
+                        String fileType = (String) REMOTE_FILE_TABLE.getValueAt(index, 1);
+                        LOGGER.info("双击文件:{}", fileName);
+                        String remote = DesktopClientInit.JT_REMOTE_PATH.getText();
+                        if("..".equals(fileName) && !"/".equals(DesktopClientInit.JT_REMOTE_PATH.getText())){
+                            remote = remote.substring(0,remote.lastIndexOf("/"));
+                            remote = "".equals(remote)?"/":remote;
+                            remote = FileUtils.afterFormatFilePath(remote);
+                            DesktopClientInit.JT_REMOTE_PATH.setText(remote);
+                            clientService.reloadRemoteFileList(REMOTE_FILE_TABLE,JT_REMOTE_PATH.getText());
+                        }else if("文件夹".equals(fileType)) {
+                            remote += "/"+fileName;
+                            remote = FileUtils.afterFormatFilePath(remote);
+                            if( "/..".equals(remote)){
+                                return;
+                            }
+                            remote = FileUtils.afterFormatFilePath(remote);
+                            DesktopClientInit.JT_REMOTE_PATH.setText(remote);
+                            clientService.reloadRemoteFileList(REMOTE_FILE_TABLE,JT_REMOTE_PATH.getText());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {
+
+            }
+        });
+    }
+
     public static JTextField JT_REMOTE_PATH = new JTextField("/");
+    public static final JTextField JT_LOCAL_FILE_PATH = new JTextField();
+    public static ClientService clientService;
+
     public static void initLoginFrem(ClientService clientService) {
+
+        DesktopClientInit.clientService=clientService;
 
         /**
          * 登录主窗体
@@ -167,17 +233,16 @@ public class DesktopClientInit {
         JPanel LocalFilePath = new JPanel();
         JLabel jlLocalPath = new JLabel("本地文件路径:");
         jlLocalPath.setFont(Constant.FONT_SIZE_20);
-        final JTextField jtLocalPath = new JTextField();
-        jtLocalPath.setBorder(Constant.BORDER);
-        jtLocalPath.setPreferredSize(new Dimension(330, 30));
-        jtLocalPath.setEditable(false);
-        jtLocalPath.setFont(new Font("宋体",Font.BOLD,14));
-        jtLocalPath.setScrollOffset(5);
+        JT_LOCAL_FILE_PATH.setBorder(Constant.BORDER);
+        JT_LOCAL_FILE_PATH.setPreferredSize(new Dimension(330, 30));
+        JT_LOCAL_FILE_PATH.setEditable(false);
+        JT_LOCAL_FILE_PATH.setFont(new Font("宋体",Font.BOLD,14));
+        JT_LOCAL_FILE_PATH.setScrollOffset(5);
         JButton chooser = new JButton("选择");
 
         chooser.setFont(Constant.FONT_SIZE_20);
         LocalFilePath.add(jlLocalPath);
-        LocalFilePath.add(jtLocalPath);
+        LocalFilePath.add(JT_LOCAL_FILE_PATH);
         LocalFilePath.add(chooser);
         info.add(BorderLayout.WEST, LocalFilePath);
 
@@ -295,7 +360,7 @@ public class DesktopClientInit {
                     filePaths.add(absolutePath);
                 }
                 try {
-                    clientService.upload(progressBar,jtLocalPath.getText(), JT_REMOTE_PATH.getText(),uploadFile,filePaths);
+                    clientService.upload(progressBar, JT_LOCAL_FILE_PATH.getText(), JT_REMOTE_PATH.getText(),uploadFile,filePaths);
                 } catch (Exception e) {
                   LOGGER.error(e.getMessage(),e);
                   DialogUtils.showError(e.getMessage());
@@ -313,7 +378,7 @@ public class DesktopClientInit {
                     paths.add((String) REMOTE_FILE_TABLE.getValueAt(index, 0));
                 }
                 try {
-                    clientService.download(progressBar,jtLocalPath.getText(), JT_REMOTE_PATH.getText(),uploadFile,paths);
+                    clientService.download(progressBar, JT_LOCAL_FILE_PATH.getText(), JT_REMOTE_PATH.getText(),uploadFile,paths);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(),e);
                     DialogUtils.showError(e.getMessage());
@@ -354,7 +419,7 @@ public class DesktopClientInit {
                     String absolutePath = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
                     String fileName = chooser.getSelectedFile().getName();
                     LOGGER.info("选择文件:{}，绝对路径：{}", absolutePath, fileName);
-                    jtLocalPath.setText(absolutePath);
+                    JT_LOCAL_FILE_PATH.setText(absolutePath);
 
 
                     FileUtils.flusFileListByPath(localTable,absolutePath);
