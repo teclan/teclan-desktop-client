@@ -23,6 +23,7 @@ import java.util.List;
 public class DesktopClientInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(DesktopClientInit.class);
     private static ActionListener defaultLoginActionListener;
+    public static JButton FLUSH_REMOTE = new JButton("刷新");
     public static  JTable REMOTE_FILE_TABLE = new JTable(){
         public boolean isCellEditable(int row, int column){
             return false;
@@ -255,13 +256,12 @@ public class DesktopClientInit {
         jlRemotePath.setFont(Constant.FONT_SIZE_20);
         JT_REMOTE_PATH.setBorder(Constant.BORDER);
         JT_REMOTE_PATH.setPreferredSize(new Dimension(330, 30));
-        JButton flush = new JButton("刷新");
-        flush.setFont(new Font("宋体",Font.BOLD,14));
+        FLUSH_REMOTE.setFont(new Font("宋体",Font.BOLD,14));
 //        jtRemotePath.setEditable(false);
         JT_REMOTE_PATH.setFont(Constant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
         remoteFilePath.add(JT_REMOTE_PATH);
-        remoteFilePath.add(flush);
+        remoteFilePath.add(FLUSH_REMOTE);
         info.add(BorderLayout.EAST, remoteFilePath);
 
 
@@ -336,7 +336,7 @@ public class DesktopClientInit {
         workSpace.setLocationRelativeTo(null);
         workSpace.pack();
 
-        flush.addActionListener(new ActionListener() {
+        FLUSH_REMOTE.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 String remoteFilePath = JT_REMOTE_PATH.getText();

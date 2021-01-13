@@ -195,13 +195,14 @@ public class FileUtils {
                     LOGGER.info("设为隐私文件:{}", fileName);
 
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("path", Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"");
+                    jsonObject.put("path", afterFormatFilePath(Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"/"+fileName));
                     try {
                         JSONObject body = HttpUtils.post("file/setPrivate.do", jsonObject);
                         String code = body.getString("code");
                         if (Assert.assertNotEquals("200", code)) {
                             throw new Exception(body.getString("message"));
                         }
+                        DesktopClientInit.FLUSH_REMOTE.doClick();
                     } catch (Exception e) {
                        LOGGER.error(e.getMessage(),e);
                         DialogUtils.showError(e.getMessage());
@@ -226,13 +227,14 @@ public class FileUtils {
                     LOGGER.info("设为公开文件:{}", fileName);
 
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("path", Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"");
+                    jsonObject.put("path", afterFormatFilePath(Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"/"+fileName));
                     try {
                         JSONObject body = HttpUtils.post("file/setPublic.do", jsonObject);
                         String code = body.getString("code");
                         if (Assert.assertNotEquals("200", code)) {
                             throw new Exception(body.getString("message"));
                         }
+                        DesktopClientInit.FLUSH_REMOTE.doClick();
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(),e);
                         DialogUtils.showError(e.getMessage());

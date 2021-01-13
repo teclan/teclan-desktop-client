@@ -36,7 +36,7 @@ public class DialogUtils {
         Container container=jFrame.getContentPane();//将窗体转化为容器
 
         StringBuffer sb = new StringBuffer();
-        int size =40;
+        int size =30;
         if(message.length()>size){
             int offset =0;
             for(int i=0;i<message.length()/size;i++){
