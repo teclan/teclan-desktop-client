@@ -14,8 +14,10 @@ import teclan.netty.handler.ParamFetcher;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DefaultClientService implements ClientService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClientService.class);
@@ -59,12 +61,21 @@ public class DefaultClientService implements ClientService {
             throw new Exception("至少选择一个本地文件 ...");
         }
 
+        Set<String> paths = new HashSet<>();
+        for (String filePath : filePaths) {
+            paths.addAll(FileUtils.getFileLis(local,new File(local+"/"+filePath)));
+        }
+
         int index = 1;
-        remote = Constant.REMOTE_ROOT+File.separator+remote;
+        remote = Constant.REMOTE_ROOT+"/"+remote;
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("remote",remote );
+
+        while (remote.indexOf("\\")>0){
+            remote = remote.replace("\\","/").replace("//","/");
+        }
+        jsonObject.put("remote",remote);
         jsonObject.put("local", local);
-        jsonObject.put("paths", Objects.list2JSONArray(filePaths));
+        jsonObject.put("paths", Objects.list2JSONArray(paths));
         JSONObject body = HttpUtils.post("file/upload.do", jsonObject);
         String code = body.getString("code");
         if (Assert.assertNotEquals("200", code)) {

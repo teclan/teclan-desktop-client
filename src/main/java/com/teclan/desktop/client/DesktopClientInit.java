@@ -1,6 +1,5 @@
 package com.teclan.desktop.client;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.teclan.desktop.client.contant.Constant;
 import com.teclan.desktop.client.listener.DefaultLoginActionListener;
@@ -26,6 +25,7 @@ public class DesktopClientInit {
             return false;
         }
     };
+    public static JTextField JT_REMOTE_PATH = new JTextField("/");
     public static void initLoginFrem(ClientService clientService) {
 
         /**
@@ -184,15 +184,14 @@ public class DesktopClientInit {
         JPanel remoteFilePath = new JPanel();
         JLabel jlRemotePath = new JLabel("服务器文件路径:");
         jlRemotePath.setFont(Constant.FONT_SIZE_20);
-        JTextField jtRemotePath = new JTextField("/");
-        jtRemotePath.setBorder(Constant.BORDER);
-        jtRemotePath.setPreferredSize(new Dimension(330, 30));
+        JT_REMOTE_PATH.setBorder(Constant.BORDER);
+        JT_REMOTE_PATH.setPreferredSize(new Dimension(330, 30));
         JButton flush = new JButton("刷新");
         flush.setFont(new Font("宋体",Font.BOLD,14));
 //        jtRemotePath.setEditable(false);
-        jtRemotePath.setFont(Constant.FONT_SIZE_20);
+        JT_REMOTE_PATH.setFont(Constant.FONT_SIZE_20);
         remoteFilePath.add(jlRemotePath);
-        remoteFilePath.add(jtRemotePath);
+        remoteFilePath.add(JT_REMOTE_PATH);
         remoteFilePath.add(flush);
         info.add(BorderLayout.EAST, remoteFilePath);
 
@@ -271,7 +270,7 @@ public class DesktopClientInit {
         flush.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String remoteFilePath = jtRemotePath.getText();
+                String remoteFilePath = JT_REMOTE_PATH.getText();
                 if(Assert.assertNullString(remoteFilePath)){
                     DialogUtils.showWarn("服务器文件路径不能为空!",new WindowAdapter() {
                         public void windowClosing(WindowEvent e) {
@@ -296,7 +295,7 @@ public class DesktopClientInit {
                     filePaths.add(absolutePath);
                 }
                 try {
-                    clientService.upload(progressBar,jtLocalPath.getText(),jtRemotePath.getText(),uploadFile,filePaths);
+                    clientService.upload(progressBar,jtLocalPath.getText(), JT_REMOTE_PATH.getText(),uploadFile,filePaths);
                 } catch (Exception e) {
                   LOGGER.error(e.getMessage(),e);
                   DialogUtils.showError(e.getMessage());
@@ -314,7 +313,7 @@ public class DesktopClientInit {
                     paths.add((String) REMOTE_FILE_TABLE.getValueAt(index, 0));
                 }
                 try {
-                    clientService.download(progressBar,jtLocalPath.getText(),jtRemotePath.getText(),uploadFile,paths);
+                    clientService.download(progressBar,jtLocalPath.getText(), JT_REMOTE_PATH.getText(),uploadFile,paths);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(),e);
                     DialogUtils.showError(e.getMessage());
@@ -332,7 +331,7 @@ public class DesktopClientInit {
                     paths.add( (String) REMOTE_FILE_TABLE.getValueAt(index, 0));
                 }
                 try {
-                    clientService.delete(jtRemotePath.getText(),REMOTE_FILE_TABLE,paths);
+                    clientService.delete(JT_REMOTE_PATH.getText(),REMOTE_FILE_TABLE,paths);
                 } catch (Exception e) {
                    LOGGER.error(e.getMessage(),e);
                     DialogUtils.showError(e.getMessage());

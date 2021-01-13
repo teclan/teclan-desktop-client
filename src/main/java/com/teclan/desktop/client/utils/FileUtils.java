@@ -2,6 +2,7 @@ package com.teclan.desktop.client.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.teclan.desktop.client.DesktopClientInit;
 import com.teclan.desktop.client.contant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 public class FileUtils {
@@ -150,7 +153,27 @@ public class FileUtils {
         setPrivate.setBackground(Color.gray);
         setPrivate.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-               LOGGER.info("设为隐私文件...");
+
+                int[] selectRowIdxs = DesktopClientInit.REMOTE_FILE_TABLE.getSelectedRows();
+                String fileName= "";
+                for (int index : selectRowIdxs) {
+                    fileName = (String) DesktopClientInit.REMOTE_FILE_TABLE.getValueAt(index, 0);
+                    LOGGER.info("设为隐私文件:{}", fileName);
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("path", Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"");
+                    try {
+                        JSONObject body = HttpUtils.post("file/setPricate.do", jsonObject);
+                        String code = body.getString("code");
+                        if (Assert.assertNotEquals("200", code)) {
+                            throw new Exception(body.getString("message"));
+                        }
+                    } catch (Exception e) {
+                       LOGGER.error(e.getMessage(),e);
+                        DialogUtils.showError(e.getMessage());
+                    }
+                    return;
+                }
             }
         });
         jPopupMenu.add(setPrivate);
@@ -162,7 +185,26 @@ public class FileUtils {
         setPrivate.setBackground(Color.gray);
         setPublic.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                LOGGER.info("设为公开文件...");
+                int[] selectRowIdxs = DesktopClientInit.REMOTE_FILE_TABLE.getSelectedRows();
+                String fileName= "";
+                for (int index : selectRowIdxs) {
+                    fileName = (String) DesktopClientInit.REMOTE_FILE_TABLE.getValueAt(index, 0);
+                    LOGGER.info("设为公开文件:{}", fileName);
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("path", Constant.REMOTE_ROOT+File.separator+ DesktopClientInit.JT_REMOTE_PATH.getText()+"");
+                    try {
+                        JSONObject body = HttpUtils.post("file/setPublic.do", jsonObject);
+                        String code = body.getString("code");
+                        if (Assert.assertNotEquals("200", code)) {
+                            throw new Exception(body.getString("message"));
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(),e);
+                        DialogUtils.showError(e.getMessage());
+                    }
+                    return;
+                }
             }
         });
         jPopupMenu.add(setPublic);
@@ -231,5 +273,44 @@ public class FileUtils {
             size = DF.format(length) + "GB";
         }
         return size;
+    }
+
+    public static Set<String> getFileLis(File file){
+
+        Set<String> abps = new HashSet<>();
+
+        if (!file.exists()){
+            return abps;
+        }
+
+        if(file.isDirectory()){
+            File[] files = file.listFiles();
+            for(File f:files){
+                abps.addAll(getFileLis(f));
+            }
+        }
+        abps.add(file.getAbsolutePath());
+
+        return abps;
+    }
+
+
+    public static Set<String> getFileLis(String prefix,File file){
+
+        Set<String> abps = new HashSet<>();
+
+        if (!file.exists()){
+            return abps;
+        }
+
+        if(file.isDirectory()){
+            File[] files = file.listFiles();
+            for(File f:files){
+                abps.addAll(getFileLis(prefix,f));
+            }
+        }
+        abps.add(file.getAbsolutePath().replace(prefix,"").replace("\\","/"));
+
+        return abps;
     }
 }
