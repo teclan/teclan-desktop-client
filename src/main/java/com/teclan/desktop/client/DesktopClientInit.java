@@ -11,10 +11,12 @@ import com.teclan.desktop.client.utils.MoveLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +92,7 @@ public class DesktopClientInit {
     public static final JTextField JT_LOCAL_FILE_PATH = new JTextField();
     public static ClientService clientService;
 
-    public static void initLoginFrem(ClientService clientService) {
+    public static void initLoginFrem(ClientService clientService) throws IOException {
 
         DesktopClientInit.clientService=clientService;
 
@@ -98,6 +100,7 @@ public class DesktopClientInit {
          * 登录主窗体
          */
         JFrame loginFrem = new JFrame();
+        loginFrem.setIconImage(ImageIO.read(new File(System.getProperty("user.dir")+"/img/file.jpg")));
         loginFrem.setUndecorated(true);
         loginFrem.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         loginFrem.setSize(600, 400);
@@ -207,6 +210,7 @@ public class DesktopClientInit {
     public static void showWorkSpace(ClientService clientService,String user) throws Exception {
 
         JFrame workSpace = new JFrame();
+        workSpace.setIconImage(ImageIO.read(new File(System.getProperty("user.dir")+"/img/file.jpg")));
         workSpace.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        workSpace.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
         workSpace.setUndecorated(true);
