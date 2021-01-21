@@ -177,28 +177,6 @@ public class DefaultClientService implements ClientService {
 
         FileClientHandler fileClientHandler = new FileClientHandler();
 
-        /**
-         * 设置进度监视器
-         */
-        fileClientHandler.setMonitor(new Monitor() {
-            public String getProcess(String file) {
-                // 自定义逻辑
-                return null;
-            }
-
-            public void serProcess(String filePath, long max, long value) {
-                // 自定义逻辑
-            }
-
-            public Map<String, String> getCahche() {
-                // 自定义逻辑
-                return null;
-            }
-
-            public void remove(String filePath) {
-                // 自定义逻辑
-            }
-        });
 
         fileClientHandler.setParamFetcher(new ParamFetcher() {
             public JSONObject get() {
